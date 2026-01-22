@@ -1,10 +1,8 @@
 # LoopDeck
 
-Open-source UI component library for reviewing, debugging, and curating Large Language Model (LLM) outputs.
+Open-source Dev tool for reviewing, debugging, annotating and curating Large Language Model (LLM) outputs.
 
 ![LoopDeck UI](screenshots/LoopDeck%20UI.png)
-
-![Context Re-ordering](screenshots/Context%20Re-ordering.png)
 
 ## Features
 
@@ -17,6 +15,8 @@ Open-source UI component library for reviewing, debugging, and curating Large La
 - 💾 **Local-First** - All data stored in IndexedDB, works offline
 - 🌙 **Dark Mode** - Automatic theme detection with manual toggle
 - ⚡ **Virtualized Lists** - Handle 100k+ items efficiently
+
+![Context Re-ordering](screenshots/Context%20Re-ordering.png)
 
 ## Quick Start
 
@@ -197,4 +197,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-Built with ❤️ for the AI/ML community
+Built with ❤️ in 🍁 for the AI/ML community
