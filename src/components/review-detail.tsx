@@ -138,7 +138,7 @@ export function ReviewDetail({ item, className }: ReviewDetailProps) {
                   </p>
                 </div>
               )}
-              <ChatBubble content={item.input.prompt} />
+              <ChatBubble variant="user" content={item.input.prompt} />
             </CardContent>
           </Card>
 
@@ -186,6 +186,7 @@ export function ReviewDetail({ item, className }: ReviewDetailProps) {
                   </CardHeader>
                   <CardContent className="pt-0">
                     <ChatBubble
+                      variant="assistant"
                       content={item.outputs[0]?.text || 'No response available'}
                       modelId={item.outputs[0]?.model_id}
                       tokenUsage={item.outputs[0]?.token_usage}
@@ -231,7 +232,7 @@ export function ReviewDetail({ item, className }: ReviewDetailProps) {
                       </div>
                     </div>
                   ) : goldenText ? (
-                    <ChatBubble content={goldenText} modelId="golden" />
+                    <ChatBubble variant="assistant" content={goldenText} modelId="golden" />
                   ) : (
                     <div className="text-center py-8 text-muted-foreground">
                       <MessageSquare className="h-8 w-8 mx-auto mb-2 opacity-50" />

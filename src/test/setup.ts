@@ -1,5 +1,5 @@
-import "@testing-library/jest-dom";
-import { vi } from "vitest";
+import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 
 // Mock IndexedDB
 const indexedDB = {
@@ -7,14 +7,14 @@ const indexedDB = {
   deleteDatabase: vi.fn(),
 };
 
-Object.defineProperty(window, "indexedDB", {
+Object.defineProperty(window, 'indexedDB', {
   value: indexedDB,
   writable: true,
 });
 
 // Mock crypto.randomUUID
-Object.defineProperty(crypto, "randomUUID", {
-  value: () => "00000000-0000-0000-0000-000000000000",
+Object.defineProperty(crypto, 'randomUUID', {
+  value: () => '00000000-0000-0000-0000-000000000000',
 });
 
 // Mock ResizeObserver
@@ -27,7 +27,7 @@ class ResizeObserver {
 window.ResizeObserver = ResizeObserver;
 
 // Mock matchMedia
-Object.defineProperty(window, "matchMedia", {
+Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: vi.fn().mockImplementation((query) => ({
     matches: false,

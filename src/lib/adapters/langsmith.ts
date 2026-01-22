@@ -6,9 +6,9 @@
  * Hierarchical trace support planned for Phase 2.
  */
 
-import type { ContextChunk, ReviewItem, SpanType } from "@/types/review";
-import { v4 as uuidv4 } from "uuid";
-import type { TraceAdapter } from "./index";
+import type { ContextChunk, ReviewItem, SpanType } from '@/types/review';
+import { v4 as uuidv4 } from 'uuid';
+import type { TraceAdapter } from './index';
 
 const SCHEMA_VERSION = 1;
 
@@ -72,26 +72,26 @@ export interface LangSmithExport {
  * Check if data is a LangSmith run format
  */
 function isLangSmithRun(data: unknown): data is LangSmithRun {
-  if (typeof data !== "object" || data === null) return false;
+  if (typeof data !== 'object' || data === null) return false;
   const obj = data as Record<string, unknown>;
 
   // Exclude ReviewItem format: if outputs is an array, it's our format, not LangSmith
-  if ("outputs" in obj && Array.isArray(obj.outputs)) {
+  if ('outputs' in obj && Array.isArray(obj.outputs)) {
     return false;
   }
 
   // Exclude ReviewItem format: if input.prompt exists and input.context_chunks exists, it's our format
-  if ("input" in obj && typeof obj.input === "object" && obj.input !== null) {
+  if ('input' in obj && typeof obj.input === 'object' && obj.input !== null) {
     const input = obj.input as Record<string, unknown>;
-    if ("prompt" in input && "context_chunks" in input) {
+    if ('prompt' in input && 'context_chunks' in input) {
       return false;
     }
   }
 
   // Must have run_id or id, and either inputs/outputs
-  const hasId = "run_id" in obj || "id" in obj;
-  const hasIO = "inputs" in obj || "outputs" in obj;
-  const hasRunType = "run_type" in obj || "name" in obj;
+  const hasId = 'run_id' in obj || 'id' in obj;
+  const hasIO = 'inputs' in obj || 'outputs' in obj;
+  const hasRunType = 'run_type' in obj || 'name' in obj;
 
   return hasId && (hasIO || hasRunType);
 }
@@ -100,7 +100,7 @@ function isLangSmithRun(data: unknown): data is LangSmithRun {
  * Check if data is a LangSmith export (array of runs or container object)
  */
 function isLangSmithExport(data: unknown): data is LangSmithExport {
-  if (typeof data !== "object" || data === null) return false;
+  if (typeof data !== 'object' || data === null) return false;
   const obj = data as Record<string, unknown>;
 
   // Check for array of runs
@@ -109,15 +109,12 @@ function isLangSmithExport(data: unknown): data is LangSmithExport {
   }
 
   // Check for container with 'runs' array
-  if ("runs" in obj && Array.isArray(obj.runs)) {
-    return (
-      obj.runs.length > 0 &&
-      obj.runs.every((item: unknown) => isLangSmithRun(item))
-    );
+  if ('runs' in obj && Array.isArray(obj.runs)) {
+    return obj.runs.length > 0 && obj.runs.every((item: unknown) => isLangSmithRun(item));
   }
 
   // Check for single run export
-  if ("run" in obj && isLangSmithRun(obj.run)) {
+  if ('run' in obj && isLangSmithRun(obj.run)) {
     return true;
   }
 
@@ -129,16 +126,16 @@ function isLangSmithExport(data: unknown): data is LangSmithExport {
  * Determine span type from LangSmith run_type
  */
 function getSpanType(runType?: string): SpanType {
-  if (!runType) return "unknown";
+  if (!runType) return 'unknown';
 
   const type = runType.toLowerCase();
-  if (type === "llm" || type === "chat_model") return "llm";
-  if (type === "retriever") return "retriever";
-  if (type === "chain") return "chain";
-  if (type === "tool") return "tool";
-  if (type === "embedding") return "embedding";
+  if (type === 'llm' || type === 'chat_model') return 'llm';
+  if (type === 'retriever') return 'retriever';
+  if (type === 'chain') return 'chain';
+  if (type === 'tool') return 'tool';
+  if (type === 'embedding') return 'embedding';
 
-  return "unknown";
+  return 'unknown';
 }
 
 /**
@@ -151,49 +148,47 @@ function extractPrompt(inputs: Record<string, unknown>): {
   // Handle various input formats
 
   // Chat messages format: { messages: [{ role: 'user', content: '...' }] }
-  if ("messages" in inputs && Array.isArray(inputs.messages)) {
+  if ('messages' in inputs && Array.isArray(inputs.messages)) {
     const messages = inputs.messages as Array<{
       role?: string;
       content?: string;
     }>;
-    const systemMsg = messages.find((m) => m.role === "system");
-    const userMsg = messages.find((m) => m.role === "user");
-    const lastUserMsg = [...messages].reverse().find((m) => m.role === "user");
+    const systemMsg = messages.find((m) => m.role === 'system');
+    const userMsg = messages.find((m) => m.role === 'user');
+    const lastUserMsg = [...messages].reverse().find((m) => m.role === 'user');
 
     return {
-      prompt: lastUserMsg?.content || userMsg?.content || "",
+      prompt: lastUserMsg?.content || userMsg?.content || '',
       systemPrompt: systemMsg?.content,
     };
   }
 
   // Simple prompt format
-  if ("prompt" in inputs) {
-    if (typeof inputs.prompt === "string") {
+  if ('prompt' in inputs) {
+    if (typeof inputs.prompt === 'string') {
       return { prompt: inputs.prompt };
     }
     // Prompt templates: { prompt: { template: '...', input_variables: {...} } }
-    if (typeof inputs.prompt === "object" && inputs.prompt !== null) {
+    if (typeof inputs.prompt === 'object' && inputs.prompt !== null) {
       const promptObj = inputs.prompt as Record<string, unknown>;
       return {
-        prompt: String(
-          promptObj.template || promptObj.text || JSON.stringify(promptObj),
-        ),
+        prompt: String(promptObj.template || promptObj.text || JSON.stringify(promptObj)),
       };
     }
   }
 
   // Input key format
-  if ("input" in inputs) {
+  if ('input' in inputs) {
     return { prompt: String(inputs.input) };
   }
 
   // Question format (common in RAG)
-  if ("question" in inputs) {
+  if ('question' in inputs) {
     return { prompt: String(inputs.question) };
   }
 
   // Query format
-  if ("query" in inputs) {
+  if ('query' in inputs) {
     return { prompt: String(inputs.query) };
   }
 
@@ -206,41 +201,37 @@ function extractPrompt(inputs: Record<string, unknown>): {
  */
 function extractResponse(outputs: Record<string, unknown>): string {
   // Chat completion format: { generations: [[{ text: '...' }]] }
-  if ("generations" in outputs && Array.isArray(outputs.generations)) {
+  if ('generations' in outputs && Array.isArray(outputs.generations)) {
     const gens = outputs.generations as Array<
       Array<{ text?: string; message?: { content?: string } }>
     >;
     if (gens[0]?.[0]) {
-      return gens[0][0].text || gens[0][0].message?.content || "";
+      return gens[0][0].text || gens[0][0].message?.content || '';
     }
   }
 
   // Message format: { message: { content: '...' } }
-  if (
-    "message" in outputs &&
-    typeof outputs.message === "object" &&
-    outputs.message !== null
-  ) {
-    return String((outputs.message as Record<string, unknown>).content || "");
+  if ('message' in outputs && typeof outputs.message === 'object' && outputs.message !== null) {
+    return String((outputs.message as Record<string, unknown>).content || '');
   }
 
   // Output key format
-  if ("output" in outputs) {
+  if ('output' in outputs) {
     return String(outputs.output);
   }
 
   // Text format
-  if ("text" in outputs) {
+  if ('text' in outputs) {
     return String(outputs.text);
   }
 
   // Answer format (common in RAG)
-  if ("answer" in outputs) {
+  if ('answer' in outputs) {
     return String(outputs.answer);
   }
 
   // Response format
-  if ("response" in outputs) {
+  if ('response' in outputs) {
     return String(outputs.response);
   }
 
@@ -264,7 +255,7 @@ function extractContextFromRetriever(run: LangSmithRun): ContextChunk[] {
       const metadata = doc.metadata as Record<string, unknown> | undefined;
       chunks.push({
         id: String(doc.id || uuidv4()),
-        text: String(doc.page_content || doc.content || doc.text || ""),
+        text: String(doc.page_content || doc.content || doc.text || ''),
         source: String(metadata?.source || doc.source || `retrieved_${index}`),
         score: Number(doc.score || doc.similarity || metadata?.score || 0),
         metadata: metadata,
@@ -284,14 +275,12 @@ function findLLMLeafSpans(run: LangSmithRun): LangSmithRun[] {
   const spanType = getSpanType(run.run_type);
 
   // If this is an LLM span with no children, it's a leaf
-  if (spanType === "llm") {
+  if (spanType === 'llm') {
     if (!run.child_runs || run.child_runs.length === 0) {
       llmSpans.push(run);
     } else {
       // Check if any children are LLM spans
-      const childLLMSpans = run.child_runs.flatMap((child) =>
-        findLLMLeafSpans(child),
-      );
+      const childLLMSpans = run.child_runs.flatMap((child) => findLLMLeafSpans(child));
       if (childLLMSpans.length === 0) {
         // No LLM children, so this is the leaf LLM span
         llmSpans.push(run);
@@ -301,9 +290,7 @@ function findLLMLeafSpans(run: LangSmithRun): LangSmithRun[] {
     }
   } else if (run.child_runs && run.child_runs.length > 0) {
     // Not an LLM span, recurse into children
-    llmSpans.push(
-      ...run.child_runs.flatMap((child) => findLLMLeafSpans(child)),
-    );
+    llmSpans.push(...run.child_runs.flatMap((child) => findLLMLeafSpans(child)));
   }
 
   return llmSpans;
@@ -312,23 +299,18 @@ function findLLMLeafSpans(run: LangSmithRun): LangSmithRun[] {
 /**
  * Find retriever spans that are siblings or ancestors of an LLM span
  */
-function findRelatedRetrieverSpans(
-  run: LangSmithRun,
-  targetSpanId?: string,
-): LangSmithRun[] {
+function findRelatedRetrieverSpans(run: LangSmithRun, targetSpanId?: string): LangSmithRun[] {
   const retrieverSpans: LangSmithRun[] = [];
 
   const spanType = getSpanType(run.run_type);
 
-  if (spanType === "retriever") {
+  if (spanType === 'retriever') {
     retrieverSpans.push(run);
   }
 
   if (run.child_runs) {
     retrieverSpans.push(
-      ...run.child_runs.flatMap((child) =>
-        findRelatedRetrieverSpans(child, targetSpanId),
-      ),
+      ...run.child_runs.flatMap((child) => findRelatedRetrieverSpans(child, targetSpanId))
     );
   }
 
@@ -341,7 +323,7 @@ function findRelatedRetrieverSpans(
 function convertRunToReviewItem(
   run: LangSmithRun,
   now: string,
-  contextChunks: ContextChunk[] = [],
+  contextChunks: ContextChunk[] = []
 ): ReviewItem {
   const runId = run.run_id || run.id || uuidv4();
   const inputs = run.inputs || {};
@@ -363,10 +345,10 @@ function convertRunToReviewItem(
     run.model ||
     run.model_name ||
     ((run.extra?.metadata as Record<string, unknown>)?.model as string) ||
-    "langsmith";
+    'langsmith';
 
   // Process feedback
-  const humanFeedback: ReviewItem["human_feedback"] = {};
+  const humanFeedback: ReviewItem['human_feedback'] = {};
   if (run.feedback && run.feedback.length > 0) {
     const corrections = run.feedback.filter((f) => f.correction);
     if (corrections.length > 0) {
@@ -375,8 +357,8 @@ function convertRunToReviewItem(
 
     const comments = run.feedback
       .filter((f) => f.comment)
-      .map((f) => `[${f.key || "feedback"}] ${f.comment}`)
-      .join("\n");
+      .map((f) => `[${f.key || 'feedback'}] ${f.comment}`)
+      .join('\n');
     if (comments) {
       humanFeedback.comments = comments;
     }
@@ -387,14 +369,14 @@ function convertRunToReviewItem(
     version: SCHEMA_VERSION,
     created_at: run.start_time || now,
     updated_at: now,
-    status: "pending",
+    status: 'pending',
     tags: run.session_name ? [run.session_name] : undefined,
     trace_metadata: {
       trace_id: runId,
       span_id: runId,
       parent_id: run.parent_run_id,
       span_type: getSpanType(run.run_type),
-      source: "langsmith",
+      source: 'langsmith',
       session_id: run.session_id,
       error: run.error,
       latency_ms: latencyMs,
@@ -415,8 +397,7 @@ function convertRunToReviewItem(
             model_id: modelId,
             text: response,
             token_usage:
-              run.total_tokens ||
-              (run.prompt_tokens || 0) + (run.completion_tokens || 0),
+              run.total_tokens || (run.prompt_tokens || 0) + (run.completion_tokens || 0),
             latency_ms: latencyMs,
           },
         ]
@@ -428,12 +409,10 @@ function convertRunToReviewItem(
 /**
  * LangSmith adapter implementation
  */
-export const langSmithAdapter: TraceAdapter<
-  LangSmithRun | LangSmithRun[] | LangSmithExport
-> = {
-  name: "langsmith",
-  description: "LangSmith/LangChain run exports",
-  fileExtensions: [".json", ".jsonl"],
+export const langSmithAdapter: TraceAdapter<LangSmithRun | LangSmithRun[] | LangSmithExport> = {
+  name: 'langsmith',
+  description: 'LangSmith/LangChain run exports',
+  fileExtensions: ['.json', '.jsonl'],
 
   detect(data: unknown): boolean {
     return isLangSmithExport(data);
@@ -443,16 +422,14 @@ export const langSmithAdapter: TraceAdapter<
     const errors: string[] = [];
 
     if (!isLangSmithExport(data)) {
-      errors.push("Data does not match LangSmith run format");
+      errors.push('Data does not match LangSmith run format');
       return { valid: false, errors };
     }
 
     return { valid: true, errors: [] };
   },
 
-  normalize(
-    data: LangSmithRun | LangSmithRun[] | LangSmithExport,
-  ): ReviewItem | ReviewItem[] {
+  normalize(data: LangSmithRun | LangSmithRun[] | LangSmithExport): ReviewItem | ReviewItem[] {
     const now = new Date().toISOString();
     const items: ReviewItem[] = [];
 
@@ -461,9 +438,9 @@ export const langSmithAdapter: TraceAdapter<
 
     if (Array.isArray(data)) {
       runs = data;
-    } else if ("runs" in data && Array.isArray(data.runs)) {
+    } else if ('runs' in data && Array.isArray(data.runs)) {
       runs = data.runs;
-    } else if ("run" in data && data.run) {
+    } else if ('run' in data && data.run) {
       runs = [data.run];
     } else if (isLangSmithRun(data)) {
       runs = [data];
@@ -475,9 +452,7 @@ export const langSmithAdapter: TraceAdapter<
     for (const run of runs) {
       // Find all retriever spans to extract context
       const retrieverSpans = findRelatedRetrieverSpans(run);
-      const contextChunks = retrieverSpans.flatMap((r) =>
-        extractContextFromRetriever(r),
-      );
+      const contextChunks = retrieverSpans.flatMap((r) => extractContextFromRetriever(r));
 
       // Find leaf LLM spans (MVP: only import leaf LLM calls)
       const llmSpans = findLLMLeafSpans(run);

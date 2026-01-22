@@ -1,18 +1,18 @@
-import type { ReviewItem } from "@/types/review";
-import Dexie, { type EntityTable } from "dexie";
+import type { ReviewItem } from '@/types/review';
+import Dexie, { type EntityTable } from 'dexie';
 
 // Database schema version
 const DB_VERSION = 1;
 
 // LoopDeck Database class
 class LoopDeckDatabase extends Dexie {
-  reviewItems!: EntityTable<ReviewItem, "id">;
+  reviewItems!: EntityTable<ReviewItem, 'id'>;
 
   constructor() {
-    super("LoopDeckDB");
+    super('LoopDeckDB');
 
     this.version(DB_VERSION).stores({
-      reviewItems: "id, status, created_at, updated_at, sync_status, *tags",
+      reviewItems: 'id, status, created_at, updated_at, sync_status, *tags',
     });
   }
 }
@@ -53,22 +53,19 @@ export const dbOperations = {
   /**
    * Get items by status
    */
-  async getItemsByStatus(status: ReviewItem["status"]): Promise<ReviewItem[]> {
-    return await db.reviewItems.where("status").equals(status).toArray();
+  async getItemsByStatus(status: ReviewItem['status']): Promise<ReviewItem[]> {
+    return await db.reviewItems.where('status').equals(status).toArray();
   },
 
   /**
    * Get items count by status
    */
   async getStatusCounts(): Promise<Record<string, number>> {
-    const statuses = ["pending", "approved", "rejected", "modified"];
+    const statuses = ['pending', 'approved', 'rejected', 'modified'];
     const counts: Record<string, number> = {};
 
     for (const status of statuses) {
-      counts[status] = await db.reviewItems
-        .where("status")
-        .equals(status)
-        .count();
+      counts[status] = await db.reviewItems.where('status').equals(status).count();
     }
 
     counts.total = await db.reviewItems.count();
@@ -88,7 +85,7 @@ export const dbOperations = {
   /**
    * Update item status
    */
-  async updateStatus(id: string, status: ReviewItem["status"]): Promise<void> {
+  async updateStatus(id: string, status: ReviewItem['status']): Promise<void> {
     await db.reviewItems.update(id, {
       status,
       updated_at: new Date().toISOString(),
@@ -100,7 +97,7 @@ export const dbOperations = {
    */
   async updateContextChunks(
     id: string,
-    contextChunks: ReviewItem["input"]["context_chunks"],
+    contextChunks: ReviewItem['input']['context_chunks']
   ): Promise<void> {
     const item = await db.reviewItems.get(id);
     if (item) {
@@ -109,7 +106,7 @@ export const dbOperations = {
           ...item.input,
           context_chunks: contextChunks,
         },
-        status: item.status === "pending" ? "modified" : item.status,
+        status: item.status === 'pending' ? 'modified' : item.status,
         updated_at: new Date().toISOString(),
       });
     }
@@ -120,7 +117,7 @@ export const dbOperations = {
    */
   async updateHumanFeedback(
     id: string,
-    feedback: Partial<ReviewItem["human_feedback"]>,
+    feedback: Partial<ReviewItem['human_feedback']>
   ): Promise<void> {
     const item = await db.reviewItems.get(id);
     if (item) {
@@ -137,12 +134,9 @@ export const dbOperations = {
   /**
    * Bulk update status
    */
-  async bulkUpdateStatus(
-    ids: string[],
-    status: ReviewItem["status"],
-  ): Promise<void> {
+  async bulkUpdateStatus(ids: string[], status: ReviewItem['status']): Promise<void> {
     const now = new Date().toISOString();
-    await db.reviewItems.where("id").anyOf(ids).modify({
+    await db.reviewItems.where('id').anyOf(ids).modify({
       status,
       updated_at: now,
     });
@@ -178,7 +172,7 @@ export const dbOperations = {
     return allItems.filter(
       (item) =>
         item.input.prompt.toLowerCase().includes(lowerSearch) ||
-        item.outputs.some((o) => o.text.toLowerCase().includes(lowerSearch)),
+        item.outputs.some((o) => o.text.toLowerCase().includes(lowerSearch))
     );
   },
 
@@ -188,21 +182,18 @@ export const dbOperations = {
   async getItemsPaginated(
     page: number,
     pageSize: number,
-    status?: ReviewItem["status"],
+    status?: ReviewItem['status']
   ): Promise<{ items: ReviewItem[]; total: number }> {
-    const collection = db.reviewItems.orderBy("created_at").reverse();
+    const collection = db.reviewItems.orderBy('created_at').reverse();
 
     if (status) {
       const items = await db.reviewItems
-        .where("status")
+        .where('status')
         .equals(status)
         .reverse()
-        .sortBy("created_at");
+        .sortBy('created_at');
       const total = items.length;
-      const paginatedItems = items.slice(
-        (page - 1) * pageSize,
-        page * pageSize,
-      );
+      const paginatedItems = items.slice((page - 1) * pageSize, page * pageSize);
       return { items: paginatedItems, total };
     }
 

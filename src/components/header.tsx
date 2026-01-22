@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -8,7 +8,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,22 +16,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
-import { useReviewStore } from "@/store";
-import {
-  Download,
-  Github,
-  HelpCircle,
-  Keyboard,
-  Moon,
-  Settings,
-  Sun,
-  Trash2,
-} from "lucide-react";
-import { useTheme } from "next-themes";
-import { useState } from "react";
+} from '@/components/ui/dropdown-menu';
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
+import { useReviewStore } from '@/store';
+import { Download, Github, HelpCircle, Keyboard, Moon, Settings, Sun, Trash2 } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { useState } from 'react';
 
 interface HeaderProps {
   className?: string;
@@ -39,8 +30,7 @@ interface HeaderProps {
 
 export function Header({ className }: HeaderProps) {
   const { theme, setTheme } = useTheme();
-  const { stats, exportItems, exportForTraining, clearAllData } =
-    useReviewStore();
+  const { stats, exportItems, exportForTraining, clearAllData } = useReviewStore();
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
   const [helpDialogOpen, setHelpDialogOpen] = useState(false);
 
@@ -52,8 +42,8 @@ export function Header({ className }: HeaderProps) {
   return (
     <header
       className={cn(
-        "border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60",
-        className,
+        'border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60',
+        className
       )}
     >
       <div className="flex h-14 items-center justify-between px-4">
@@ -63,9 +53,7 @@ export function Header({ className }: HeaderProps) {
             L
           </div>
           <span className="font-semibold text-lg">LoopDeck</span>
-          <span className="text-xs text-muted-foreground hidden sm:inline">
-            v0.1.0
-          </span>
+          <span className="text-xs text-muted-foreground hidden sm:inline">v0.1.0</span>
         </div>
 
         {/* Actions */}
@@ -95,9 +83,7 @@ export function Header({ className }: HeaderProps) {
                 <Download className="h-4 w-4 mr-2" />
                 Export for Training
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => exportItems({ includeMetadata: true })}
-              >
+              <DropdownMenuItem onClick={() => exportItems({ includeMetadata: true })}>
                 <Download className="h-4 w-4 mr-2" />
                 Export All with Metadata
               </DropdownMenuItem>
@@ -143,7 +129,7 @@ export function Header({ className }: HeaderProps) {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           >
             <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
             <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -151,11 +137,7 @@ export function Header({ className }: HeaderProps) {
           </Button>
 
           {/* Help */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setHelpDialogOpen(true)}
-          >
+          <Button variant="ghost" size="icon" onClick={() => setHelpDialogOpen(true)}>
             <HelpCircle className="h-4 w-4" />
           </Button>
         </div>
@@ -167,8 +149,8 @@ export function Header({ className }: HeaderProps) {
           <DialogHeader>
             <DialogTitle>Clear all data?</DialogTitle>
             <DialogDescription>
-              This will permanently delete all {stats.total} review items from
-              your local database. This action cannot be undone.
+              This will permanently delete all {stats.total} review items from your local database.
+              This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -187,18 +169,14 @@ export function Header({ className }: HeaderProps) {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Keyboard Shortcuts</DialogTitle>
-            <DialogDescription>
-              Speed up your workflow with these shortcuts
-            </DialogDescription>
+            <DialogDescription>Speed up your workflow with these shortcuts</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
               <h4 className="font-medium mb-2">Review Actions</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">
-                    Vote for model 1, 2, 3
-                  </span>
+                  <span className="text-muted-foreground">Vote for model 1, 2, 3</span>
                   <kbd className="px-2 py-0.5 bg-muted rounded text-xs">1</kbd>
                   <kbd className="px-2 py-0.5 bg-muted rounded text-xs">2</kbd>
                   <kbd className="px-2 py-0.5 bg-muted rounded text-xs">3</kbd>
@@ -210,17 +188,11 @@ export function Header({ className }: HeaderProps) {
               <h4 className="font-medium mb-2">Navigation</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">
-                    Navigate items/chunks
-                  </span>
-                  <kbd className="px-2 py-0.5 bg-muted rounded text-xs">
-                    Tab
-                  </kbd>
+                  <span className="text-muted-foreground">Navigate items/chunks</span>
+                  <kbd className="px-2 py-0.5 bg-muted rounded text-xs">Tab</kbd>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">
-                    Move focus up/down
-                  </span>
+                  <span className="text-muted-foreground">Move focus up/down</span>
                   <kbd className="px-2 py-0.5 bg-muted rounded text-xs">↑</kbd>
                   <kbd className="px-2 py-0.5 bg-muted rounded text-xs">↓</kbd>
                 </div>
@@ -233,15 +205,9 @@ export function Header({ className }: HeaderProps) {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Export dialog</span>
                   <span className="flex gap-1">
-                    <kbd className="px-2 py-0.5 bg-muted rounded text-xs">
-                      Ctrl
-                    </kbd>
-                    <kbd className="px-2 py-0.5 bg-muted rounded text-xs">
-                      Shift
-                    </kbd>
-                    <kbd className="px-2 py-0.5 bg-muted rounded text-xs">
-                      E
-                    </kbd>
+                    <kbd className="px-2 py-0.5 bg-muted rounded text-xs">Ctrl</kbd>
+                    <kbd className="px-2 py-0.5 bg-muted rounded text-xs">Shift</kbd>
+                    <kbd className="px-2 py-0.5 bg-muted rounded text-xs">E</kbd>
                   </span>
                 </div>
               </div>

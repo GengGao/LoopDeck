@@ -1,9 +1,9 @@
-import { dbOperations } from "@/lib/db";
-import { exportForTraining, exportToJsonl, parseJsonlFile } from "@/lib/jsonl";
-import { downloadFile } from "@/lib/utils";
-import type { ReviewFilters, ReviewItem, ReviewStats } from "@/types/review";
-import { create } from "zustand";
-import { subscribeWithSelector } from "zustand/middleware";
+import { dbOperations } from '@/lib/db';
+import { exportForTraining, exportToJsonl, parseJsonlFile } from '@/lib/jsonl';
+import { downloadFile } from '@/lib/utils';
+import type { ReviewFilters, ReviewItem, ReviewStats } from '@/types/review';
+import { create } from 'zustand';
+import { subscribeWithSelector } from 'zustand/middleware';
 
 interface ReviewStore {
   // State
@@ -25,15 +25,12 @@ interface ReviewStore {
   resetFilters: () => void;
 
   // Item operations
-  updateItemStatus: (id: string, status: ReviewItem["status"]) => Promise<void>;
-  bulkUpdateStatus: (status: ReviewItem["status"]) => Promise<void>;
-  updateContextChunks: (
-    id: string,
-    chunks: ReviewItem["input"]["context_chunks"],
-  ) => Promise<void>;
+  updateItemStatus: (id: string, status: ReviewItem['status']) => Promise<void>;
+  bulkUpdateStatus: (status: ReviewItem['status']) => Promise<void>;
+  updateContextChunks: (id: string, chunks: ReviewItem['input']['context_chunks']) => Promise<void>;
   updateHumanFeedback: (
     id: string,
-    feedback: Partial<ReviewItem["human_feedback"]>,
+    feedback: Partial<ReviewItem['human_feedback']>
   ) => Promise<void>;
   deleteItems: (ids: string[]) => Promise<void>;
 
@@ -49,12 +46,12 @@ interface ReviewStore {
 }
 
 const defaultFilters: ReviewFilters = {
-  status: "all",
+  status: 'all',
   tags: [],
   modelId: undefined,
-  search: "",
-  sortBy: "created_at",
-  sortOrder: "desc",
+  search: '',
+  sortBy: 'created_at',
+  sortOrder: 'desc',
 };
 
 const defaultStats: ReviewStats = {
@@ -95,8 +92,7 @@ export const useReviewStore = create<ReviewStore>()(
         });
       } catch (error) {
         set({
-          error:
-            error instanceof Error ? error.message : "Failed to load items",
+          error: error instanceof Error ? error.message : 'Failed to load items',
           isLoading: false,
         });
       }
@@ -138,8 +134,7 @@ export const useReviewStore = create<ReviewStore>()(
         await get().loadItems();
       } catch (error) {
         set({
-          error:
-            error instanceof Error ? error.message : "Failed to update status",
+          error: error instanceof Error ? error.message : 'Failed to update status',
         });
       }
     },
@@ -154,8 +149,7 @@ export const useReviewStore = create<ReviewStore>()(
         await get().loadItems();
       } catch (error) {
         set({
-          error:
-            error instanceof Error ? error.message : "Failed to update items",
+          error: error instanceof Error ? error.message : 'Failed to update items',
         });
       }
     },
@@ -166,8 +160,7 @@ export const useReviewStore = create<ReviewStore>()(
         await get().loadItems();
       } catch (error) {
         set({
-          error:
-            error instanceof Error ? error.message : "Failed to update context",
+          error: error instanceof Error ? error.message : 'Failed to update context',
         });
       }
     },
@@ -178,10 +171,7 @@ export const useReviewStore = create<ReviewStore>()(
         await get().loadItems();
       } catch (error) {
         set({
-          error:
-            error instanceof Error
-              ? error.message
-              : "Failed to update feedback",
+          error: error instanceof Error ? error.message : 'Failed to update feedback',
         });
       }
     },
@@ -190,18 +180,13 @@ export const useReviewStore = create<ReviewStore>()(
       try {
         await dbOperations.deleteItems(ids);
         set((state) => ({
-          selectedIds: new Set(
-            [...state.selectedIds].filter((id) => !ids.includes(id)),
-          ),
-          selectedItemId: ids.includes(state.selectedItemId || "")
-            ? null
-            : state.selectedItemId,
+          selectedIds: new Set([...state.selectedIds].filter((id) => !ids.includes(id))),
+          selectedItemId: ids.includes(state.selectedItemId || '') ? null : state.selectedItemId,
         }));
         await get().loadItems();
       } catch (error) {
         set({
-          error:
-            error instanceof Error ? error.message : "Failed to delete items",
+          error: error instanceof Error ? error.message : 'Failed to delete items',
         });
       }
     },
@@ -222,17 +207,17 @@ export const useReviewStore = create<ReviewStore>()(
           success: result.items.length > 0,
           message:
             result.items.length > 0
-              ? `Successfully imported ${result.items.length} items${result.errors.length > 0 ? ` (${result.errors.length} errors)` : ""}`
-              : "No valid items found in file",
+              ? `Successfully imported ${result.items.length} items${result.errors.length > 0 ? ` (${result.errors.length} errors)` : ''}`
+              : 'No valid items found in file',
         };
       } catch (error) {
         set({
           isLoading: false,
-          error: error instanceof Error ? error.message : "Import failed",
+          error: error instanceof Error ? error.message : 'Import failed',
         });
         return {
           success: false,
-          message: error instanceof Error ? error.message : "Import failed",
+          message: error instanceof Error ? error.message : 'Import failed',
         };
       }
     },
@@ -242,12 +227,12 @@ export const useReviewStore = create<ReviewStore>()(
       let itemsToExport = items;
 
       // Filter by status if not 'all'
-      if (filters.status && filters.status !== "all") {
+      if (filters.status && filters.status !== 'all') {
         itemsToExport = items.filter((item) => item.status === filters.status);
       } else {
         // By default, export approved and modified items
         itemsToExport = items.filter(
-          (item) => item.status === "approved" || item.status === "modified",
+          (item) => item.status === 'approved' || item.status === 'modified'
         );
       }
 
@@ -256,18 +241,14 @@ export const useReviewStore = create<ReviewStore>()(
       }
 
       const jsonl = exportToJsonl(itemsToExport, options);
-      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-      downloadFile(
-        jsonl,
-        `loopdeck-export-${timestamp}.jsonl`,
-        "application/jsonl",
-      );
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      downloadFile(jsonl, `loopdeck-export-${timestamp}.jsonl`, 'application/jsonl');
     },
 
     exportForTraining: () => {
       const { items } = get();
       const approvedItems = items.filter(
-        (item) => item.status === "approved" || item.status === "modified",
+        (item) => item.status === 'approved' || item.status === 'modified'
       );
 
       if (approvedItems.length === 0) {
@@ -275,12 +256,8 @@ export const useReviewStore = create<ReviewStore>()(
       }
 
       const jsonl = exportForTraining(approvedItems);
-      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-      downloadFile(
-        jsonl,
-        `loopdeck-training-${timestamp}.jsonl`,
-        "application/jsonl",
-      );
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      downloadFile(jsonl, `loopdeck-training-${timestamp}.jsonl`, 'application/jsonl');
     },
 
     clearAllData: async () => {
@@ -294,8 +271,7 @@ export const useReviewStore = create<ReviewStore>()(
         });
       } catch (error) {
         set({
-          error:
-            error instanceof Error ? error.message : "Failed to clear data",
+          error: error instanceof Error ? error.message : 'Failed to clear data',
         });
       }
     },
@@ -306,21 +282,19 @@ export const useReviewStore = create<ReviewStore>()(
       let filtered = [...items];
 
       // Filter by status
-      if (filters.status && filters.status !== "all") {
+      if (filters.status && filters.status !== 'all') {
         filtered = filtered.filter((item) => item.status === filters.status);
       }
 
       // Filter by tags
       if (filters.tags && filters.tags.length > 0) {
-        filtered = filtered.filter((item) =>
-          filters.tags!.some((tag) => item.tags?.includes(tag)),
-        );
+        filtered = filtered.filter((item) => filters.tags!.some((tag) => item.tags?.includes(tag)));
       }
 
       // Filter by model
       if (filters.modelId) {
         filtered = filtered.filter((item) =>
-          item.outputs.some((o) => o.model_id === filters.modelId),
+          item.outputs.some((o) => o.model_id === filters.modelId)
         );
       }
 
@@ -330,7 +304,7 @@ export const useReviewStore = create<ReviewStore>()(
         filtered = filtered.filter(
           (item) =>
             item.input.prompt.toLowerCase().includes(search) ||
-            item.outputs.some((o) => o.text.toLowerCase().includes(search)),
+            item.outputs.some((o) => o.text.toLowerCase().includes(search))
         );
       }
 
@@ -341,15 +315,15 @@ export const useReviewStore = create<ReviewStore>()(
           let bVal: string | number;
 
           switch (filters.sortBy) {
-            case "created_at":
+            case 'created_at':
               aVal = a.created_at;
               bVal = b.created_at;
               break;
-            case "updated_at":
+            case 'updated_at':
               aVal = a.updated_at;
               bVal = b.updated_at;
               break;
-            case "status":
+            case 'status':
               aVal = a.status;
               bVal = b.status;
               break;
@@ -358,7 +332,7 @@ export const useReviewStore = create<ReviewStore>()(
               bVal = b.created_at;
           }
 
-          if (filters.sortOrder === "asc") {
+          if (filters.sortOrder === 'asc') {
             return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
           }
           return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
@@ -372,5 +346,5 @@ export const useReviewStore = create<ReviewStore>()(
       const { items, selectedItemId } = get();
       return items.find((item) => item.id === selectedItemId);
     },
-  })),
+  }))
 );

@@ -1,5 +1,5 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -17,7 +17,7 @@ export function formatRelativeTime(date: string | Date): string {
   const diffHour = Math.floor(diffMin / 60);
   const diffDay = Math.floor(diffHour / 24);
 
-  if (diffSec < 60) return "just now";
+  if (diffSec < 60) return 'just now';
   if (diffMin < 60) return `${diffMin}m ago`;
   if (diffHour < 24) return `${diffHour}h ago`;
   if (diffDay < 7) return `${diffDay}d ago`;
@@ -28,18 +28,18 @@ export function formatRelativeTime(date: string | Date): string {
  * Get score color class based on similarity score
  */
 export function getScoreColorClass(score: number): string {
-  if (score >= 0.9) return "score-high";
-  if (score >= 0.7) return "score-medium";
-  return "score-low";
+  if (score >= 0.9) return 'score-high';
+  if (score >= 0.7) return 'score-medium';
+  return 'score-low';
 }
 
 /**
  * Get score emoji based on similarity score
  */
 export function getScoreEmoji(score: number): string {
-  if (score >= 0.9) return "🟢";
-  if (score >= 0.7) return "🟡";
-  return "🔴";
+  if (score >= 0.9) return '🟢';
+  if (score >= 0.7) return '🟡';
+  return '🔴';
 }
 
 /**
@@ -68,14 +68,10 @@ export function estimateTokenCount(text: string): number {
 /**
  * Download a file
  */
-export function downloadFile(
-  content: string,
-  filename: string,
-  mimeType = "application/json",
-) {
+export function downloadFile(content: string, filename: string, mimeType = 'application/json') {
   const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
+  const link = document.createElement('a');
   link.href = url;
   link.download = filename;
   document.body.appendChild(link);

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
@@ -9,7 +9,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,11 +17,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
-import { useReviewStore } from "@/store";
-import { CheckCircle, MoreHorizontal, Trash2, XCircle } from "lucide-react";
-import { useState } from "react";
+} from '@/components/ui/dropdown-menu';
+import { cn } from '@/lib/utils';
+import { useReviewStore } from '@/store';
+import { CheckCircle, MoreHorizontal, Trash2, XCircle } from 'lucide-react';
+import { useState } from 'react';
 
 interface BulkActionsProps {
   className?: string;
@@ -41,8 +41,7 @@ export function BulkActions({ className }: BulkActionsProps) {
 
   const filteredItems = getFilteredItems();
   const selectedCount = selectedIds.size;
-  const allSelected =
-    selectedCount === filteredItems.length && filteredItems.length > 0;
+  const allSelected = selectedCount === filteredItems.length && filteredItems.length > 0;
 
   const handleSelectAll = () => {
     if (allSelected) {
@@ -53,11 +52,11 @@ export function BulkActions({ className }: BulkActionsProps) {
   };
 
   const handleBulkApprove = () => {
-    bulkUpdateStatus("approved");
+    bulkUpdateStatus('approved');
   };
 
   const handleBulkReject = () => {
-    bulkUpdateStatus("rejected");
+    bulkUpdateStatus('rejected');
   };
 
   const handleBulkDelete = () => {
@@ -68,7 +67,7 @@ export function BulkActions({ className }: BulkActionsProps) {
   if (filteredItems.length === 0) return null;
 
   return (
-    <div className={cn("flex items-center justify-between py-2", className)}>
+    <div className={cn('flex items-center justify-between py-2', className)}>
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2">
           <Checkbox
@@ -104,10 +103,10 @@ export function BulkActions({ className }: BulkActionsProps) {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Bulk Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => bulkUpdateStatus("pending")}>
+              <DropdownMenuItem onClick={() => bulkUpdateStatus('pending')}>
                 Mark as Pending
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => bulkUpdateStatus("modified")}>
+              <DropdownMenuItem onClick={() => bulkUpdateStatus('modified')}>
                 Mark as Modified
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -133,15 +132,12 @@ export function BulkActions({ className }: BulkActionsProps) {
           <DialogHeader>
             <DialogTitle>Delete {selectedCount} items?</DialogTitle>
             <DialogDescription>
-              This action cannot be undone. These items will be permanently
-              removed from your local database.
+              This action cannot be undone. These items will be permanently removed from your local
+              database.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setDeleteDialogOpen(false)}
-            >
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
               Cancel
             </Button>
             <Button variant="destructive" onClick={handleBulkDelete}>
