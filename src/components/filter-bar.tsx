@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,20 +9,20 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { cn } from '@/lib/utils';
-import { useReviewStore } from '@/store';
-import type { ReviewStatus } from '@/types/review';
-import { Filter, Search, SortAsc, SortDesc, X } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { useReviewStore } from "@/store";
+import type { ReviewStatus } from "@/types/review";
+import { Filter, Search, SortAsc, SortDesc, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 interface FilterBarProps {
   className?: string;
@@ -30,11 +30,13 @@ interface FilterBarProps {
 
 export function FilterBar({ className }: FilterBarProps) {
   const { filters, setFilters, resetFilters, stats, items } = useReviewStore();
-  const [searchValue, setSearchValue] = useState(filters.search || '');
+  const [searchValue, setSearchValue] = useState(filters.search || "");
   const searchTimeoutRef = useRef<NodeJS.Timeout>();
 
   // Get unique models from items
-  const models = [...new Set(items.flatMap((item) => item.outputs.map((o) => o.model_id)))];
+  const models = [
+    ...new Set(items.flatMap((item) => item.outputs.map((o) => o.model_id))),
+  ];
 
   // Update search filter with debounce
   useEffect(() => {
@@ -56,7 +58,7 @@ export function FilterBar({ className }: FilterBarProps) {
   // biome-ignore lint:correctness/useExhaustiveDependencies
   useEffect(() => {
     if (filters.search !== searchValue) {
-      setSearchValue(filters.search || '');
+      setSearchValue(filters.search || "");
     }
   }, [filters.search]);
 
@@ -70,30 +72,30 @@ export function FilterBar({ className }: FilterBarProps) {
   };
 
   const handleSearchClear = () => {
-    setSearchValue('');
-    setFilters({ search: '' });
+    setSearchValue("");
+    setFilters({ search: "" });
   };
 
   const handleStatusChange = (status: string) => {
-    setFilters({ status: status as ReviewStatus | 'all' });
+    setFilters({ status: status as ReviewStatus | "all" });
   };
 
   const handleSortChange = (sortBy: string) => {
-    setFilters({ sortBy: sortBy as 'created_at' | 'updated_at' | 'status' });
+    setFilters({ sortBy: sortBy as "created_at" | "updated_at" | "status" });
   };
 
   const toggleSortOrder = () => {
-    setFilters({ sortOrder: filters.sortOrder === 'asc' ? 'desc' : 'asc' });
+    setFilters({ sortOrder: filters.sortOrder === "asc" ? "desc" : "asc" });
   };
 
   const hasActiveFilters =
-    filters.status !== 'all' ||
+    filters.status !== "all" ||
     filters.search ||
     filters.modelId ||
     (filters.tags && filters.tags.length > 0);
 
   return (
-    <div className={cn('space-y-3', className)}>
+    <div className={cn("space-y-3", className)}>
       {/* Search */}
       <form onSubmit={handleSearchSubmit} className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -120,9 +122,9 @@ export function FilterBar({ className }: FilterBarProps) {
       {/* Status Filter Pills */}
       <div className="flex items-center gap-2 flex-wrap">
         <Button
-          variant={filters.status === 'all' ? 'default' : 'outline'}
+          variant={filters.status === "all" ? "default" : "outline"}
           size="sm"
-          onClick={() => handleStatusChange('all')}
+          onClick={() => handleStatusChange("all")}
           className="h-7"
         >
           All
@@ -131,9 +133,9 @@ export function FilterBar({ className }: FilterBarProps) {
           </Badge>
         </Button>
         <Button
-          variant={filters.status === 'pending' ? 'default' : 'outline'}
+          variant={filters.status === "pending" ? "default" : "outline"}
           size="sm"
-          onClick={() => handleStatusChange('pending')}
+          onClick={() => handleStatusChange("pending")}
           className="h-7"
         >
           Pending
@@ -142,9 +144,9 @@ export function FilterBar({ className }: FilterBarProps) {
           </Badge>
         </Button>
         <Button
-          variant={filters.status === 'approved' ? 'default' : 'outline'}
+          variant={filters.status === "approved" ? "default" : "outline"}
           size="sm"
-          onClick={() => handleStatusChange('approved')}
+          onClick={() => handleStatusChange("approved")}
           className="h-7"
         >
           Approved
@@ -153,9 +155,9 @@ export function FilterBar({ className }: FilterBarProps) {
           </Badge>
         </Button>
         <Button
-          variant={filters.status === 'modified' ? 'default' : 'outline'}
+          variant={filters.status === "modified" ? "default" : "outline"}
           size="sm"
-          onClick={() => handleStatusChange('modified')}
+          onClick={() => handleStatusChange("modified")}
           className="h-7"
         >
           Modified
@@ -164,9 +166,9 @@ export function FilterBar({ className }: FilterBarProps) {
           </Badge>
         </Button>
         <Button
-          variant={filters.status === 'rejected' ? 'default' : 'outline'}
+          variant={filters.status === "rejected" ? "default" : "outline"}
           size="sm"
-          onClick={() => handleStatusChange('rejected')}
+          onClick={() => handleStatusChange("rejected")}
           className="h-7"
         >
           Rejected
@@ -181,8 +183,10 @@ export function FilterBar({ className }: FilterBarProps) {
         {/* Model Filter */}
         {models.length > 1 && (
           <Select
-            value={filters.modelId || 'all'}
-            onValueChange={(value) => setFilters({ modelId: value === 'all' ? undefined : value })}
+            value={filters.modelId || "all"}
+            onValueChange={(value) =>
+              setFilters({ modelId: value === "all" ? undefined : value })
+            }
           >
             <SelectTrigger className="w-[150px] h-8">
               <SelectValue placeholder="All models" />
@@ -210,20 +214,20 @@ export function FilterBar({ className }: FilterBarProps) {
             <DropdownMenuLabel>Sort by</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={() => handleSortChange('created_at')}
-              className={cn(filters.sortBy === 'created_at' && 'bg-accent')}
+              onClick={() => handleSortChange("created_at")}
+              className={cn(filters.sortBy === "created_at" && "bg-accent")}
             >
               Created Date
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => handleSortChange('updated_at')}
-              className={cn(filters.sortBy === 'updated_at' && 'bg-accent')}
+              onClick={() => handleSortChange("updated_at")}
+              className={cn(filters.sortBy === "updated_at" && "bg-accent")}
             >
               Updated Date
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => handleSortChange('status')}
-              className={cn(filters.sortBy === 'status' && 'bg-accent')}
+              onClick={() => handleSortChange("status")}
+              className={cn(filters.sortBy === "status" && "bg-accent")}
             >
               Status
             </DropdownMenuItem>
@@ -231,8 +235,13 @@ export function FilterBar({ className }: FilterBarProps) {
         </DropdownMenu>
 
         {/* Sort Order Toggle */}
-        <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={toggleSortOrder}>
-          {filters.sortOrder === 'asc' ? (
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-8 w-8 p-0"
+          onClick={toggleSortOrder}
+        >
+          {filters.sortOrder === "asc" ? (
             <SortAsc className="h-4 w-4" />
           ) : (
             <SortDesc className="h-4 w-4" />
@@ -241,7 +250,12 @@ export function FilterBar({ className }: FilterBarProps) {
 
         {/* Clear Filters */}
         {hasActiveFilters && (
-          <Button variant="ghost" size="sm" className="h-8" onClick={resetFilters}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-8"
+            onClick={resetFilters}
+          >
             <X className="h-3 w-3 mr-1" />
             Clear
           </Button>

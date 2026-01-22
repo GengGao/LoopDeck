@@ -1,13 +1,18 @@
-'use client';
+"use client";
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { cn, estimateTokenCount, getScoreEmoji } from '@/lib/utils';
-import { useReviewStore } from '@/store';
-import type { ContextChunk } from '@/types/review';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn, estimateTokenCount, getScoreEmoji } from "@/lib/utils";
+import { useReviewStore } from "@/store";
+import type { ContextChunk } from "@/types/review";
 import {
   DndContext,
   type DragEndEvent,
@@ -16,17 +21,17 @@ import {
   closestCenter,
   useSensor,
   useSensors,
-} from '@dnd-kit/core';
+} from "@dnd-kit/core";
 import {
   SortableContext,
   arrayMove,
   sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, RotateCcw, Trash2 } from 'lucide-react';
-import { useMemo } from 'react';
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { GripVertical, RotateCcw, Trash2 } from "lucide-react";
+import { useMemo } from "react";
 
 interface SortableChunkProps {
   chunk: ContextChunk;
@@ -35,8 +40,20 @@ interface SortableChunkProps {
   onRestore: (id: string) => void;
 }
 
-function SortableChunk({ chunk, index, onExclude, onRestore }: SortableChunkProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+function SortableChunk({
+  chunk,
+  index,
+  onExclude,
+  onRestore,
+}: SortableChunkProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
     id: chunk.id,
   });
 
@@ -52,9 +69,9 @@ function SortableChunk({ chunk, index, onExclude, onRestore }: SortableChunkProp
       ref={setNodeRef}
       style={style}
       className={cn(
-        'group relative rounded-lg border bg-card p-3 transition-all',
-        isDragging && 'z-50 shadow-lg opacity-90',
-        chunk.excluded && 'opacity-50 bg-muted'
+        "group relative rounded-lg border bg-card p-3 transition-all",
+        isDragging && "z-50 shadow-lg opacity-90",
+        chunk.excluded && "opacity-50 bg-muted",
       )}
     >
       <div className="flex items-start gap-2">
@@ -81,14 +98,15 @@ function SortableChunk({ chunk, index, onExclude, onRestore }: SortableChunkProp
                     <Badge
                       variant={
                         chunk.score >= 0.9
-                          ? 'success'
+                          ? "success"
                           : chunk.score >= 0.7
-                            ? 'warning'
-                            : 'destructive'
+                            ? "warning"
+                            : "destructive"
                       }
                       className="text-xs"
                     >
-                      {getScoreEmoji(chunk.score)} {(chunk.score * 100).toFixed(0)}%
+                      {getScoreEmoji(chunk.score)}{" "}
+                      {(chunk.score * 100).toFixed(0)}%
                     </Badge>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -96,7 +114,9 @@ function SortableChunk({ chunk, index, onExclude, onRestore }: SortableChunkProp
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-              <span className="text-xs text-muted-foreground">~{tokenCount} tokens</span>
+              <span className="text-xs text-muted-foreground">
+                ~{tokenCount} tokens
+              </span>
             </div>
 
             {chunk.excluded ? (
@@ -122,7 +142,12 @@ function SortableChunk({ chunk, index, onExclude, onRestore }: SortableChunkProp
             )}
           </div>
 
-          <p className={cn('text-sm whitespace-pre-wrap', chunk.excluded && 'line-through')}>
+          <p
+            className={cn(
+              "text-sm whitespace-pre-wrap",
+              chunk.excluded && "line-through",
+            )}
+          >
             {chunk.text}
           </p>
         </div>
@@ -137,14 +162,18 @@ interface ContextRerankerProps {
   className?: string;
 }
 
-export function ContextReranker({ itemId, chunks, className }: ContextRerankerProps) {
+export function ContextReranker({
+  itemId,
+  chunks,
+  className,
+}: ContextRerankerProps) {
   const { updateContextChunks } = useReviewStore();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   // Separate active and excluded chunks
@@ -161,10 +190,12 @@ export function ContextReranker({ itemId, chunks, className }: ContextRerankerPr
       const oldIndex = activeChunks.findIndex((c) => c.id === active.id);
       const newIndex = activeChunks.findIndex((c) => c.id === over.id);
 
-      const reordered = arrayMove(activeChunks, oldIndex, newIndex).map((chunk, index) => ({
-        ...chunk,
-        rank: index,
-      }));
+      const reordered = arrayMove(activeChunks, oldIndex, newIndex).map(
+        (chunk, index) => ({
+          ...chunk,
+          rank: index,
+        }),
+      );
 
       // Combine with excluded chunks
       const updatedChunks = [...reordered, ...excludedChunks];
@@ -173,12 +204,16 @@ export function ContextReranker({ itemId, chunks, className }: ContextRerankerPr
   };
 
   const handleExclude = (chunkId: string) => {
-    const updatedChunks = chunks.map((c) => (c.id === chunkId ? { ...c, excluded: true } : c));
+    const updatedChunks = chunks.map((c) =>
+      c.id === chunkId ? { ...c, excluded: true } : c,
+    );
     updateContextChunks(itemId, updatedChunks);
   };
 
   const handleRestore = (chunkId: string) => {
-    const updatedChunks = chunks.map((c) => (c.id === chunkId ? { ...c, excluded: false } : c));
+    const updatedChunks = chunks.map((c) =>
+      c.id === chunkId ? { ...c, excluded: false } : c,
+    );
     updateContextChunks(itemId, updatedChunks);
   };
 
@@ -189,7 +224,9 @@ export function ContextReranker({ itemId, chunks, className }: ContextRerankerPr
           <CardTitle className="text-sm font-medium">Context Chunks</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">No context chunks available</p>
+          <p className="text-sm text-muted-foreground">
+            No context chunks available
+          </p>
         </CardContent>
       </Card>
     );
@@ -200,7 +237,8 @@ export function ContextReranker({ itemId, chunks, className }: ContextRerankerPr
       <CardHeader className="py-3">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium">
-            Context Chunks ({activeChunks.length} active, {excludedChunks.length} excluded)
+            Context Chunks ({activeChunks.length} active,{" "}
+            {excludedChunks.length} excluded)
           </CardTitle>
         </div>
       </CardHeader>
@@ -232,7 +270,9 @@ export function ContextReranker({ itemId, chunks, className }: ContextRerankerPr
               <>
                 <div className="flex items-center gap-2 pt-4 pb-2">
                   <Trash2 className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium text-muted-foreground">Excluded Chunks</span>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Excluded Chunks
+                  </span>
                 </div>
                 {excludedChunks.map((chunk, index) => (
                   <SortableChunk

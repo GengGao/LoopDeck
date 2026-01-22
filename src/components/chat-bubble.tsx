@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
-import type { ModelOutput } from '@/types/review';
-import ReactMarkdown from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import type { ModelOutput } from "@/types/review";
+import ReactMarkdown from "react-markdown";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 interface ChatBubbleProps {
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
   modelId?: string;
   tokenUsage?: number;
@@ -29,18 +29,24 @@ export function ChatBubble({
   onSelect,
   className,
 }: ChatBubbleProps) {
-  const isUser = role === 'user';
-  const isSystem = role === 'system';
+  const isUser = role === "user";
+  const isSystem = role === "system";
 
   return (
-    <div className={cn('flex w-full', isUser ? 'justify-end' : 'justify-start', className)}>
+    <div
+      className={cn(
+        "flex w-full",
+        isUser ? "justify-end" : "justify-start",
+        className,
+      )}
+    >
       <Card
         className={cn(
-          'max-w-[85%] transition-all',
-          isUser && 'bg-primary text-primary-foreground',
-          isSystem && 'bg-muted border-dashed',
-          isSelected && 'ring-2 ring-primary',
-          onSelect && 'cursor-pointer hover:shadow-md'
+          "max-w-[85%] transition-all",
+          isUser && "bg-primary text-primary-foreground",
+          isSystem && "bg-muted border-dashed",
+          isSelected && "ring-2 ring-primary",
+          onSelect && "cursor-pointer hover:shadow-md",
         )}
         onClick={onSelect}
       >
@@ -48,7 +54,10 @@ export function ChatBubble({
           <CardHeader className="py-2 px-3">
             <div className="flex items-center gap-2 flex-wrap">
               {modelId && (
-                <Badge variant={isUser ? 'secondary' : 'outline'} className="text-xs">
+                <Badge
+                  variant={isUser ? "secondary" : "outline"}
+                  className="text-xs"
+                >
                   {modelId}
                 </Badge>
               )}
@@ -61,17 +70,25 @@ export function ChatBubble({
             </div>
           </CardHeader>
         )}
-        <CardContent className={cn('px-3 pb-3', !modelId && !tokenUsage && !latencyMs && 'pt-3')}>
+        <CardContent
+          className={cn(
+            "px-3 pb-3",
+            !modelId && !tokenUsage && !latencyMs && "pt-3",
+          )}
+        >
           <div className="prose prose-sm dark:prose-invert max-w-none">
             <ReactMarkdown
               components={{
                 code({ node, className, children, ...props }) {
-                  const match = /language-(\w+)/.exec(className || '');
+                  const match = /language-(\w+)/.exec(className || "");
                   const isInline = !match;
 
                   if (isInline) {
                     return (
-                      <code className="bg-muted px-1 py-0.5 rounded text-sm" {...props}>
+                      <code
+                        className="bg-muted px-1 py-0.5 rounded text-sm"
+                        {...props}
+                      >
                         {children}
                       </code>
                     );
@@ -84,7 +101,7 @@ export function ChatBubble({
                       PreTag="div"
                       className="rounded-md text-sm"
                     >
-                      {String(children).replace(/\n$/, '')}
+                      {String(children).replace(/\n$/, "")}
                     </SyntaxHighlighter>
                   );
                 },
@@ -123,7 +140,7 @@ export function ModelComparison({
 }: ModelComparisonProps) {
   if (outputs.length === 0) {
     return (
-      <div className={cn('text-center text-muted-foreground py-8', className)}>
+      <div className={cn("text-center text-muted-foreground py-8", className)}>
         No model outputs available
       </div>
     );
@@ -138,7 +155,9 @@ export function ModelComparison({
           tokenUsage={outputs[0].token_usage}
           latencyMs={outputs[0].latency_ms}
           isSelected={selectedModelId === outputs[0].model_id}
-          onSelect={onSelectModel ? () => onSelectModel(outputs[0].model_id) : undefined}
+          onSelect={
+            onSelectModel ? () => onSelectModel(outputs[0].model_id) : undefined
+          }
         />
       </div>
     );
@@ -147,18 +166,22 @@ export function ModelComparison({
   // Side-by-side comparison for multiple outputs
   return (
     <div
-      className={cn('grid gap-4', className)}
-      style={{ gridTemplateColumns: `repeat(${Math.min(outputs.length, 3)}, 1fr)` }}
+      className={cn("grid gap-4", className)}
+      style={{
+        gridTemplateColumns: `repeat(${Math.min(outputs.length, 3)}, 1fr)`,
+      }}
     >
       {outputs.map((output, index) => (
         <Card
           key={output.model_id}
           className={cn(
-            'transition-all',
-            selectedModelId === output.model_id && 'ring-2 ring-primary',
-            onSelectModel && 'cursor-pointer hover:shadow-md'
+            "transition-all",
+            selectedModelId === output.model_id && "ring-2 ring-primary",
+            onSelectModel && "cursor-pointer hover:shadow-md",
           )}
-          onClick={onSelectModel ? () => onSelectModel(output.model_id) : undefined}
+          onClick={
+            onSelectModel ? () => onSelectModel(output.model_id) : undefined
+          }
         >
           <CardHeader className="py-2 px-3">
             <div className="flex items-center justify-between">
@@ -166,10 +189,14 @@ export function ModelComparison({
                 <Badge variant="outline">#{index + 1}</Badge>
                 <Badge variant="secondary">{output.model_id}</Badge>
               </div>
-              {selectedModelId === output.model_id && <Badge variant="success">Selected</Badge>}
+              {selectedModelId === output.model_id && (
+                <Badge variant="success">Selected</Badge>
+              )}
             </div>
             <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-              {output.token_usage > 0 && <span>{output.token_usage} tokens</span>}
+              {output.token_usage > 0 && (
+                <span>{output.token_usage} tokens</span>
+              )}
               {output.latency_ms > 0 && <span>{output.latency_ms}ms</span>}
             </div>
           </CardHeader>
@@ -178,12 +205,15 @@ export function ModelComparison({
               <ReactMarkdown
                 components={{
                   code({ node, className, children, ...props }) {
-                    const match = /language-(\w+)/.exec(className || '');
+                    const match = /language-(\w+)/.exec(className || "");
                     const isInline = !match;
 
                     if (isInline) {
                       return (
-                        <code className="bg-muted px-1 py-0.5 rounded text-sm" {...props}>
+                        <code
+                          className="bg-muted px-1 py-0.5 rounded text-sm"
+                          {...props}
+                        >
                           {children}
                         </code>
                       );
@@ -196,7 +226,7 @@ export function ModelComparison({
                         PreTag="div"
                         className="rounded-md text-sm"
                       >
-                        {String(children).replace(/\n$/, '')}
+                        {String(children).replace(/\n$/, "")}
                       </SyntaxHighlighter>
                     );
                   },

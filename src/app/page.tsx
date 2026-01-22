@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   BulkActions,
@@ -7,18 +7,19 @@ import {
   Header,
   ReviewDetail,
   ReviewQueue,
-} from '@/components';
-import { cn } from '@/lib/utils';
-import { useReviewStore } from '@/store';
-import { FileText } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+} from "@/components";
+import { cn } from "@/lib/utils";
+import { useReviewStore } from "@/store";
+import { FileText } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 export default function HomePage() {
-  const { items, loadItems, getSelectedItem, isLoading, stats } = useReviewStore();
+  const { items, loadItems, getSelectedItem, isLoading, stats } =
+    useReviewStore();
   const [mounted, setMounted] = useState(false);
   const [importMessage, setImportMessage] = useState<{
-    type: 'success' | 'error';
+    type: "success" | "error";
     text: string;
   } | null>(null);
 
@@ -30,9 +31,12 @@ export default function HomePage() {
     loadItems();
   }, [loadItems]);
 
-  const handleImportComplete = (result: { success: boolean; message: string }) => {
+  const handleImportComplete = (result: {
+    success: boolean;
+    message: string;
+  }) => {
     setImportMessage({
-      type: result.success ? 'success' : 'error',
+      type: result.success ? "success" : "error",
       text: result.message,
     });
     setTimeout(() => setImportMessage(null), 5000);
@@ -54,10 +58,10 @@ export default function HomePage() {
       {importMessage && (
         <div
           className={cn(
-            'fixed top-16 right-4 z-50 rounded-lg px-4 py-3 shadow-lg transition-all',
-            importMessage.type === 'success'
-              ? 'bg-success text-success-foreground'
-              : 'bg-destructive text-destructive-foreground'
+            "fixed top-16 right-4 z-50 rounded-lg px-4 py-3 shadow-lg transition-all",
+            importMessage.type === "success"
+              ? "bg-success text-success-foreground"
+              : "bg-destructive text-destructive-foreground",
           )}
         >
           {importMessage.text}
@@ -71,12 +75,15 @@ export default function HomePage() {
             <div className="text-center space-y-2">
               <h1 className="text-2xl font-semibold">Welcome to LoopDeck</h1>
               <p className="text-muted-foreground">
-                Import your JSONL file to start reviewing and curating LLM outputs
+                Import your JSONL file to start reviewing and curating LLM
+                outputs
               </p>
             </div>
             <FileDropZone onImportComplete={handleImportComplete} />
             <div className="text-center text-sm text-muted-foreground space-y-1">
-              <p>Supports OpenAI fine-tuning format, RAG logs, and custom formats</p>
+              <p>
+                Supports OpenAI fine-tuning format, RAG logs, and custom formats
+              </p>
               <p className="text-xs">Data is stored locally in your browser</p>
             </div>
           </div>
@@ -89,7 +96,11 @@ export default function HomePage() {
             <div className="flex h-full flex-col border-r">
               {/* Import Zone (Collapsed) */}
               <div className="p-3 border-b">
-                <FileDropZone className="h-20" compact onImportComplete={handleImportComplete} />
+                <FileDropZone
+                  className="h-20"
+                  compact
+                  onImportComplete={handleImportComplete}
+                />
               </div>
 
               {/* Filters */}
@@ -118,18 +129,24 @@ export default function HomePage() {
             ) : (
               <div className="flex h-full flex-col items-center justify-center text-center p-8">
                 <FileText className="h-16 w-16 text-muted-foreground/30 mb-4" />
-                <h2 className="text-lg font-medium">Select an item to review</h2>
+                <h2 className="text-lg font-medium">
+                  Select an item to review
+                </h2>
                 <p className="text-sm text-muted-foreground mt-1">
                   Click on any item in the queue to view details
                 </p>
                 <div className="mt-6 text-xs text-muted-foreground">
                   <p>
-                    <kbd className="px-1.5 py-0.5 bg-muted rounded">Tab</kbd> to navigate
+                    <kbd className="px-1.5 py-0.5 bg-muted rounded">Tab</kbd> to
+                    navigate
                   </p>
                   <p className="mt-1">
                     <kbd className="px-1.5 py-0.5 bg-muted rounded">1</kbd>
                     <kbd className="px-1.5 py-0.5 bg-muted rounded ml-1">2</kbd>
-                    <kbd className="px-1.5 py-0.5 bg-muted rounded ml-1">3</kbd> to vote for models
+                    <kbd className="px-1.5 py-0.5 bg-muted rounded ml-1">
+                      3
+                    </kbd>{" "}
+                    to vote for models
                   </p>
                 </div>
               </div>
