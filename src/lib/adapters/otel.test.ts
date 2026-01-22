@@ -12,20 +12,22 @@ describe('OpenTelemetry Adapter', () => {
   describe('detect', () => {
     it('should detect OTLP format with resourceSpans', () => {
       const data = {
-        resourceSpans: [{
-          scopeSpans: [{
-            spans: [{ traceId: 'abc', spanId: '123', name: 'test' }],
-          }],
-        }],
+        resourceSpans: [
+          {
+            scopeSpans: [
+              {
+                spans: [{ traceId: 'abc', spanId: '123', name: 'test' }],
+              },
+            ],
+          },
+        ],
       };
       expect(otelAdapter.detect(data)).toBe(true);
     });
 
     it('should detect flat spans array', () => {
       const data = {
-        spans: [
-          { traceId: 'abc', spanId: '123', name: 'test' },
-        ],
+        spans: [{ traceId: 'abc', spanId: '123', name: 'test' }],
       };
       expect(otelAdapter.detect(data)).toBe(true);
     });
@@ -59,25 +61,34 @@ describe('OpenTelemetry Adapter', () => {
   describe('normalize', () => {
     it('should normalize a span with gen_ai attributes', () => {
       const data = {
-        resourceSpans: [{
-          scopeSpans: [{
-            spans: [{
-              traceId: 'trace123',
-              spanId: 'span456',
-              name: 'llm.chat',
-              startTimeUnixNano: '1736506800000000000',
-              endTimeUnixNano: '1736506802500000000',
-              attributes: [
-                { key: 'gen_ai.request.model', value: { stringValue: 'gpt-4' } },
-                { key: 'gen_ai.prompt', value: { stringValue: 'What is AI?' } },
-                { key: 'gen_ai.completion', value: { stringValue: 'AI stands for Artificial Intelligence.' } },
-                { key: 'gen_ai.usage.input_tokens', value: { intValue: 10 } },
-                { key: 'gen_ai.usage.output_tokens', value: { intValue: 20 } },
-              ],
-              status: { code: 1 },
-            }],
-          }],
-        }],
+        resourceSpans: [
+          {
+            scopeSpans: [
+              {
+                spans: [
+                  {
+                    traceId: 'trace123',
+                    spanId: 'span456',
+                    name: 'llm.chat',
+                    startTimeUnixNano: '1736506800000000000',
+                    endTimeUnixNano: '1736506802500000000',
+                    attributes: [
+                      { key: 'gen_ai.request.model', value: { stringValue: 'gpt-4' } },
+                      { key: 'gen_ai.prompt', value: { stringValue: 'What is AI?' } },
+                      {
+                        key: 'gen_ai.completion',
+                        value: { stringValue: 'AI stands for Artificial Intelligence.' },
+                      },
+                      { key: 'gen_ai.usage.input_tokens', value: { intValue: 10 } },
+                      { key: 'gen_ai.usage.output_tokens', value: { intValue: 20 } },
+                    ],
+                    status: { code: 1 },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       };
 
       const result = otelAdapter.normalize(data) as ReviewItem;
@@ -94,18 +105,20 @@ describe('OpenTelemetry Adapter', () => {
 
     it('should handle llm.* attribute naming convention', () => {
       const data = {
-        spans: [{
-          traceId: 'trace1',
-          spanId: 'span1',
-          name: 'ChatAnthropic',
-          startTimeUnixNano: '1000000000000000',
-          endTimeUnixNano: '2000000000000000',
-          attributes: [
-            { key: 'llm.model', value: { stringValue: 'claude-3' } },
-            { key: 'llm.prompts', value: { stringValue: 'Explain closures' } },
-            { key: 'llm.responses', value: { stringValue: 'A closure is a function...' } },
-          ],
-        }],
+        spans: [
+          {
+            traceId: 'trace1',
+            spanId: 'span1',
+            name: 'ChatAnthropic',
+            startTimeUnixNano: '1000000000000000',
+            endTimeUnixNano: '2000000000000000',
+            attributes: [
+              { key: 'llm.model', value: { stringValue: 'claude-3' } },
+              { key: 'llm.prompts', value: { stringValue: 'Explain closures' } },
+              { key: 'llm.responses', value: { stringValue: 'A closure is a function...' } },
+            ],
+          },
+        ],
       };
 
       const result = otelAdapter.normalize(data) as ReviewItem;
@@ -161,20 +174,20 @@ describe('OpenTelemetry Adapter', () => {
 
     it('should handle spans with errors', () => {
       const data = {
-        spans: [{
-          traceId: 'trace1',
-          spanId: 'span1',
-          name: 'llm.chat',
-          startTimeUnixNano: '1000000000000000',
-          endTimeUnixNano: '1100000000000000',
-          attributes: [
-            { key: 'gen_ai.prompt', value: { stringValue: 'Test' } },
-          ],
-          status: {
-            code: 2,
-            message: 'Rate limit exceeded',
+        spans: [
+          {
+            traceId: 'trace1',
+            spanId: 'span1',
+            name: 'llm.chat',
+            startTimeUnixNano: '1000000000000000',
+            endTimeUnixNano: '1100000000000000',
+            attributes: [{ key: 'gen_ai.prompt', value: { stringValue: 'Test' } }],
+            status: {
+              code: 2,
+              message: 'Rate limit exceeded',
+            },
           },
-        }],
+        ],
       };
 
       const result = otelAdapter.normalize(data) as ReviewItem;
@@ -184,17 +197,19 @@ describe('OpenTelemetry Adapter', () => {
 
     it('should calculate latency from timestamps', () => {
       const data = {
-        spans: [{
-          traceId: 'trace1',
-          spanId: 'span1',
-          name: 'llm.chat',
-          startTimeUnixNano: '1736506800000000000', // exactly 0 ms
-          endTimeUnixNano: '1736506802500000000', // 2500 ms later
-          attributes: [
-            { key: 'gen_ai.prompt', value: { stringValue: 'Test' } },
-            { key: 'gen_ai.completion', value: { stringValue: 'Response' } },
-          ],
-        }],
+        spans: [
+          {
+            traceId: 'trace1',
+            spanId: 'span1',
+            name: 'llm.chat',
+            startTimeUnixNano: '1736506800000000000', // exactly 0 ms
+            endTimeUnixNano: '1736506802500000000', // 2500 ms later
+            attributes: [
+              { key: 'gen_ai.prompt', value: { stringValue: 'Test' } },
+              { key: 'gen_ai.completion', value: { stringValue: 'Response' } },
+            ],
+          },
+        ],
       };
 
       const result = otelAdapter.normalize(data) as ReviewItem;
@@ -205,33 +220,43 @@ describe('OpenTelemetry Adapter', () => {
 
     it('should handle array of prompt messages', () => {
       const data = {
-        spans: [{
-          traceId: 'trace1',
-          spanId: 'span1',
-          name: 'llm.chat',
-          startTimeUnixNano: '1000000000000000',
-          endTimeUnixNano: '2000000000000000',
-          attributes: [
-            {
-              key: 'gen_ai.prompt',
-              value: {
-                arrayValue: {
-                  values: [
-                    { kvlistValue: { values: [
-                      { key: 'role', value: { stringValue: 'system' } },
-                      { key: 'content', value: { stringValue: 'You are helpful.' } },
-                    ] } },
-                    { kvlistValue: { values: [
-                      { key: 'role', value: { stringValue: 'user' } },
-                      { key: 'content', value: { stringValue: 'Hello!' } },
-                    ] } },
-                  ],
+        spans: [
+          {
+            traceId: 'trace1',
+            spanId: 'span1',
+            name: 'llm.chat',
+            startTimeUnixNano: '1000000000000000',
+            endTimeUnixNano: '2000000000000000',
+            attributes: [
+              {
+                key: 'gen_ai.prompt',
+                value: {
+                  arrayValue: {
+                    values: [
+                      {
+                        kvlistValue: {
+                          values: [
+                            { key: 'role', value: { stringValue: 'system' } },
+                            { key: 'content', value: { stringValue: 'You are helpful.' } },
+                          ],
+                        },
+                      },
+                      {
+                        kvlistValue: {
+                          values: [
+                            { key: 'role', value: { stringValue: 'user' } },
+                            { key: 'content', value: { stringValue: 'Hello!' } },
+                          ],
+                        },
+                      },
+                    ],
+                  },
                 },
               },
-            },
-            { key: 'gen_ai.completion', value: { stringValue: 'Hi there!' } },
-          ],
-        }],
+              { key: 'gen_ai.completion', value: { stringValue: 'Hi there!' } },
+            ],
+          },
+        ],
       };
 
       const result = otelAdapter.normalize(data) as ReviewItem;
@@ -288,17 +313,19 @@ describe('OpenTelemetry Adapter', () => {
       });
 
       const data = {
-        spans: [{
-          traceId: 'trace1',
-          spanId: 'span1',
-          name: 'CustomLLM',
-          startTimeUnixNano: '1000000000000000',
-          endTimeUnixNano: '2000000000000000',
-          attributes: [
-            { key: 'custom.input.text', value: { stringValue: 'Custom prompt' } },
-            { key: 'custom.output.text', value: { stringValue: 'Custom response' } },
-          ],
-        }],
+        spans: [
+          {
+            traceId: 'trace1',
+            spanId: 'span1',
+            name: 'CustomLLM',
+            startTimeUnixNano: '1000000000000000',
+            endTimeUnixNano: '2000000000000000',
+            attributes: [
+              { key: 'custom.input.text', value: { stringValue: 'Custom prompt' } },
+              { key: 'custom.output.text', value: { stringValue: 'Custom response' } },
+            ],
+          },
+        ],
       };
 
       const result = otelAdapter.normalize(data) as ReviewItem;
@@ -311,11 +338,15 @@ describe('OpenTelemetry Adapter', () => {
   describe('validate', () => {
     it('should validate correct OTel data', () => {
       const data = {
-        resourceSpans: [{
-          scopeSpans: [{
-            spans: [{ traceId: 'abc', spanId: '123', name: 'test' }],
-          }],
-        }],
+        resourceSpans: [
+          {
+            scopeSpans: [
+              {
+                spans: [{ traceId: 'abc', spanId: '123', name: 'test' }],
+              },
+            ],
+          },
+        ],
       };
       const result = otelAdapter.validate!(data);
       expect(result.valid).toBe(true);

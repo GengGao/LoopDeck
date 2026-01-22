@@ -105,7 +105,7 @@ function isLangSmithExport(data: unknown): data is LangSmithExport {
 
   // Check for array of runs
   if (Array.isArray(data)) {
-    return data.length > 0 && data.every(item => isLangSmithRun(item));
+    return data.length > 0 && data.every((item) => isLangSmithRun(item));
   }
 
   // Check for container with 'runs' array
@@ -147,9 +147,9 @@ function extractPrompt(inputs: Record<string, unknown>): { prompt: string; syste
   // Chat messages format: { messages: [{ role: 'user', content: '...' }] }
   if ('messages' in inputs && Array.isArray(inputs.messages)) {
     const messages = inputs.messages as Array<{ role?: string; content?: string }>;
-    const systemMsg = messages.find(m => m.role === 'system');
-    const userMsg = messages.find(m => m.role === 'user');
-    const lastUserMsg = [...messages].reverse().find(m => m.role === 'user');
+    const systemMsg = messages.find((m) => m.role === 'system');
+    const userMsg = messages.find((m) => m.role === 'user');
+    const lastUserMsg = [...messages].reverse().find((m) => m.role === 'user');
 
     return {
       prompt: lastUserMsg?.content || userMsg?.content || '',
@@ -194,7 +194,9 @@ function extractPrompt(inputs: Record<string, unknown>): { prompt: string; syste
 function extractResponse(outputs: Record<string, unknown>): string {
   // Chat completion format: { generations: [[{ text: '...' }]] }
   if ('generations' in outputs && Array.isArray(outputs.generations)) {
-    const gens = outputs.generations as Array<Array<{ text?: string; message?: { content?: string } }>>;
+    const gens = outputs.generations as Array<
+      Array<{ text?: string; message?: { content?: string } }>
+    >;
     if (gens[0]?.[0]) {
       return gens[0][0].text || gens[0][0].message?.content || '';
     }
@@ -270,7 +272,7 @@ function findLLMLeafSpans(run: LangSmithRun): LangSmithRun[] {
       llmSpans.push(run);
     } else {
       // Check if any children are LLM spans
-      const childLLMSpans = run.child_runs.flatMap(child => findLLMLeafSpans(child));
+      const childLLMSpans = run.child_runs.flatMap((child) => findLLMLeafSpans(child));
       if (childLLMSpans.length === 0) {
         // No LLM children, so this is the leaf LLM span
         llmSpans.push(run);
@@ -280,7 +282,7 @@ function findLLMLeafSpans(run: LangSmithRun): LangSmithRun[] {
     }
   } else if (run.child_runs && run.child_runs.length > 0) {
     // Not an LLM span, recurse into children
-    llmSpans.push(...run.child_runs.flatMap(child => findLLMLeafSpans(child)));
+    llmSpans.push(...run.child_runs.flatMap((child) => findLLMLeafSpans(child)));
   }
 
   return llmSpans;
@@ -299,7 +301,9 @@ function findRelatedRetrieverSpans(run: LangSmithRun, targetSpanId?: string): La
   }
 
   if (run.child_runs) {
-    retrieverSpans.push(...run.child_runs.flatMap(child => findRelatedRetrieverSpans(child, targetSpanId)));
+    retrieverSpans.push(
+      ...run.child_runs.flatMap((child) => findRelatedRetrieverSpans(child, targetSpanId))
+    );
   }
 
   return retrieverSpans;
@@ -329,21 +333,23 @@ function convertRunToReviewItem(
   }
 
   // Extract model info
-  const modelId = run.model || run.model_name ||
-    (run.extra?.metadata as Record<string, unknown>)?.model as string ||
+  const modelId =
+    run.model ||
+    run.model_name ||
+    ((run.extra?.metadata as Record<string, unknown>)?.model as string) ||
     'langsmith';
 
   // Process feedback
   const humanFeedback: ReviewItem['human_feedback'] = {};
   if (run.feedback && run.feedback.length > 0) {
-    const corrections = run.feedback.filter(f => f.correction);
+    const corrections = run.feedback.filter((f) => f.correction);
     if (corrections.length > 0) {
       humanFeedback.corrected_text = corrections[0].correction;
     }
 
     const comments = run.feedback
-      .filter(f => f.comment)
-      .map(f => `[${f.key || 'feedback'}] ${f.comment}`)
+      .filter((f) => f.comment)
+      .map((f) => `[${f.key || 'feedback'}] ${f.comment}`)
       .join('\n');
     if (comments) {
       humanFeedback.comments = comments;
@@ -377,12 +383,17 @@ function convertRunToReviewItem(
       system_prompt: systemPrompt,
       context_chunks: contextChunks,
     },
-    outputs: response ? [{
-      model_id: modelId,
-      text: response,
-      token_usage: run.total_tokens || (run.prompt_tokens || 0) + (run.completion_tokens || 0),
-      latency_ms: latencyMs,
-    }] : [],
+    outputs: response
+      ? [
+          {
+            model_id: modelId,
+            text: response,
+            token_usage:
+              run.total_tokens || (run.prompt_tokens || 0) + (run.completion_tokens || 0),
+            latency_ms: latencyMs,
+          },
+        ]
+      : [],
     human_feedback: humanFeedback,
   };
 }
@@ -433,7 +444,7 @@ export const langSmithAdapter: TraceAdapter<LangSmithRun | LangSmithRun[] | Lang
     for (const run of runs) {
       // Find all retriever spans to extract context
       const retrieverSpans = findRelatedRetrieverSpans(run);
-      const contextChunks = retrieverSpans.flatMap(r => extractContextFromRetriever(r));
+      const contextChunks = retrieverSpans.flatMap((r) => extractContextFromRetriever(r));
 
       // Find leaf LLM spans (MVP: only import leaf LLM calls)
       const llmSpans = findLLMLeafSpans(run);

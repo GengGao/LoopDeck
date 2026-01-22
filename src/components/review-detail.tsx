@@ -1,20 +1,19 @@
 'use client';
 
-import { useState } from 'react';
-import { CheckCircle, XCircle, Edit3, MessageSquare, Copy, Check } from 'lucide-react';
-import type { ReviewItem } from '@/types/review';
-import { useReviewStore } from '@/store';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ContextReranker } from './context-reranker';
-import { ChatBubble, ModelComparison } from './chat-bubble';
 import { cn, formatRelativeTime } from '@/lib/utils';
+import { useReviewStore } from '@/store';
+import type { ReviewItem } from '@/types/review';
+import { Check, CheckCircle, Copy, Edit3, MessageSquare, XCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ChatBubble, ModelComparison } from './chat-bubble';
+import { ContextReranker } from './context-reranker';
 
 interface ReviewDetailProps {
   item: ReviewItem;
@@ -23,11 +22,19 @@ interface ReviewDetailProps {
 
 export function ReviewDetail({ item, className }: ReviewDetailProps) {
   const { updateItemStatus, updateHumanFeedback } = useReviewStore();
-  const [activeTab, setActiveTab] = useState<string>(item.outputs.length > 1 ? 'compare' : 'context');
+  const [activeTab, setActiveTab] = useState<string>(
+    item.outputs.length > 1 ? 'compare' : 'context'
+  );
   const [isEditing, setIsEditing] = useState(false);
   const [goldenText, setGoldenText] = useState(item.human_feedback.corrected_text || '');
   const [comments, setComments] = useState(item.human_feedback.comments || '');
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    setGoldenText(item.human_feedback.corrected_text || '');
+    setComments(item.human_feedback.comments || '');
+    setActiveTab(item.outputs.length > 1 ? 'compare' : 'context');
+  }, [item.human_feedback.corrected_text, item.human_feedback.comments, item.outputs.length]);
 
   const handleApprove = () => {
     updateItemStatus(item.id, 'approved');
@@ -66,7 +73,7 @@ export function ReviewDetail({ item, className }: ReviewDetailProps) {
     if (e.target instanceof HTMLTextAreaElement) return;
 
     if (item.outputs.length > 1) {
-      const key = parseInt(e.key);
+      const key = Number.parseInt(e.key);
       if (key >= 1 && key <= item.outputs.length) {
         handleSelectModel(item.outputs[key - 1].model_id);
       }
@@ -74,7 +81,7 @@ export function ReviewDetail({ item, className }: ReviewDetailProps) {
   };
 
   return (
-    <div className={cn('flex flex-col h-full', className)} onKeyDown={handleKeyDown} tabIndex={0}>
+    <div className={cn('flex flex-col h-full', className)} onKeyDown={handleKeyDown}>
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b">
         <div className="space-y-1">
@@ -112,11 +119,7 @@ export function ReviewDetail({ item, className }: ReviewDetailProps) {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button variant="ghost" size="sm" onClick={handleCopyPrompt}>
-                        {copied ? (
-                          <Check className="h-4 w-4" />
-                        ) : (
-                          <Copy className="h-4 w-4" />
-                        )}
+                        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>Copy prompt</TooltipContent>
@@ -127,13 +130,15 @@ export function ReviewDetail({ item, className }: ReviewDetailProps) {
             <CardContent className="pt-0">
               {item.input.system_prompt && (
                 <div className="mb-3">
-                  <Badge variant="outline" className="mb-2 text-xs">System</Badge>
+                  <Badge variant="outline" className="mb-2 text-xs">
+                    System
+                  </Badge>
                   <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                     {item.input.system_prompt}
                   </p>
                 </div>
               )}
-              <ChatBubble role="user" content={item.input.prompt} />
+              <ChatBubble content={item.input.prompt} />
             </CardContent>
           </Card>
 
@@ -152,10 +157,7 @@ export function ReviewDetail({ item, className }: ReviewDetailProps) {
             </TabsList>
 
             <TabsContent value="context" className="mt-4">
-              <ContextReranker
-                itemId={item.id}
-                chunks={item.input.context_chunks}
-              />
+              <ContextReranker itemId={item.id} chunks={item.input.context_chunks} />
             </TabsContent>
 
             <TabsContent value="compare" className="mt-4">
@@ -184,7 +186,6 @@ export function ReviewDetail({ item, className }: ReviewDetailProps) {
                   </CardHeader>
                   <CardContent className="pt-0">
                     <ChatBubble
-                      role="assistant"
                       content={item.outputs[0]?.text || 'No response available'}
                       modelId={item.outputs[0]?.model_id}
                       tokenUsage={item.outputs[0]?.token_usage}
@@ -230,7 +231,7 @@ export function ReviewDetail({ item, className }: ReviewDetailProps) {
                       </div>
                     </div>
                   ) : goldenText ? (
-                    <ChatBubble role="assistant" content={goldenText} modelId="golden" />
+                    <ChatBubble content={goldenText} modelId="golden" />
                   ) : (
                     <div className="text-center py-8 text-muted-foreground">
                       <MessageSquare className="h-8 w-8 mx-auto mb-2 opacity-50" />

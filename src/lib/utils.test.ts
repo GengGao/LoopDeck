@@ -1,5 +1,11 @@
-import { describe, it, expect } from 'vitest';
-import { cn, formatRelativeTime, getScoreEmoji, truncateText, estimateTokenCount } from '@/lib/utils';
+import {
+  cn,
+  estimateTokenCount,
+  formatRelativeTime,
+  getScoreEmoji,
+  truncateText,
+} from '@/lib/utils';
+import { describe, expect, it } from 'vitest';
 
 describe('utils', () => {
   describe('cn', () => {

@@ -1,23 +1,26 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
-import { FileText } from 'lucide-react';
-import { useReviewStore } from '@/store';
 import {
-  Header,
-  FileDropZone,
-  ReviewQueue,
-  FilterBar,
   BulkActions,
+  FileDropZone,
+  FilterBar,
+  Header,
   ReviewDetail,
+  ReviewQueue,
 } from '@/components';
 import { cn } from '@/lib/utils';
+import { useReviewStore } from '@/store';
+import { FileText } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 
 export default function HomePage() {
   const { items, loadItems, getSelectedItem, isLoading, stats } = useReviewStore();
   const [mounted, setMounted] = useState(false);
-  const [importMessage, setImportMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [importMessage, setImportMessage] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
 
   const selectedItem = getSelectedItem();
 
@@ -86,11 +89,7 @@ export default function HomePage() {
             <div className="flex h-full flex-col border-r">
               {/* Import Zone (Collapsed) */}
               <div className="p-3 border-b">
-                <FileDropZone
-                  className="h-20"
-                  compact
-                  onImportComplete={handleImportComplete}
-                />
+                <FileDropZone className="h-20" compact onImportComplete={handleImportComplete} />
               </div>
 
               {/* Filters */}

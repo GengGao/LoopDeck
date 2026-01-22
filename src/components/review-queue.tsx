@@ -1,14 +1,13 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { useVirtualizer } from '@tanstack/react-virtual';
-import { FileText, Clock, CheckCircle, XCircle, Edit3 } from 'lucide-react';
-import { useReviewStore } from '@/store';
-import type { ReviewItem } from '@/types/review';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn, formatRelativeTime, truncateText } from '@/lib/utils';
+import { useReviewStore } from '@/store';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { CheckCircle, Clock, Edit3, FileText, XCircle } from 'lucide-react';
+import { useRef } from 'react';
 
 const statusIcons = {
   pending: Clock,
@@ -29,13 +28,8 @@ interface ReviewQueueProps {
 }
 
 export function ReviewQueue({ className }: ReviewQueueProps) {
-  const {
-    selectedItemId,
-    selectedIds,
-    setSelectedItem,
-    toggleItemSelection,
-    getFilteredItems,
-  } = useReviewStore();
+  const { selectedItemId, selectedIds, setSelectedItem, toggleItemSelection, getFilteredItems } =
+    useReviewStore();
 
   const items = getFilteredItems();
   const parentRef = useRef<HTMLDivElement>(null);
@@ -52,9 +46,7 @@ export function ReviewQueue({ className }: ReviewQueueProps) {
       <div className={cn('flex flex-col items-center justify-center p-8 text-center', className)}>
         <FileText className="h-12 w-12 text-muted-foreground/50 mb-4" />
         <p className="text-sm text-muted-foreground">No items to review</p>
-        <p className="text-xs text-muted-foreground mt-1">
-          Import a JSONL file to get started
-        </p>
+        <p className="text-xs text-muted-foreground mt-1">Import a JSONL file to get started</p>
       </div>
     );
   }
@@ -79,10 +71,7 @@ export function ReviewQueue({ className }: ReviewQueueProps) {
               key={item.id}
               data-index={virtualItem.index}
               ref={virtualizer.measureElement}
-              className={cn(
-                'absolute left-0 top-0 w-full p-2',
-                'cursor-pointer transition-colors'
-              )}
+              className={cn('absolute left-0 top-0 w-full p-2', 'cursor-pointer transition-colors')}
               style={{
                 transform: `translateY(${virtualItem.start}px)`,
               }}
@@ -95,6 +84,14 @@ export function ReviewQueue({ className }: ReviewQueueProps) {
                     : 'border-transparent hover:bg-muted/50'
                 )}
                 onClick={() => setSelectedItem(item.id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    setSelectedItem(item.id);
+                    e.preventDefault();
+                  }
+                }}
+                // biome-ignore lint:a11y/noNoninteractiveTabindex
+                tabIndex={0}
               >
                 <Checkbox
                   checked={isChecked}
@@ -119,13 +116,9 @@ export function ReviewQueue({ className }: ReviewQueueProps) {
                       </Badge>
                     )}
                   </div>
-                  <p className="text-sm line-clamp-2">
-                    {truncateText(item.input.prompt, 120)}
-                  </p>
+                  <p className="text-sm line-clamp-2">{truncateText(item.input.prompt, 120)}</p>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    {item.outputs[0] && (
-                      <span>{item.outputs[0].model_id}</span>
-                    )}
+                    {item.outputs[0] && <span>{item.outputs[0].model_id}</span>}
                     <span>•</span>
                     <span>{formatRelativeTime(item.created_at)}</span>
                   </div>

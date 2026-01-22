@@ -1,19 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-import {
-  Moon,
-  Sun,
-  Download,
-  Upload,
-  Trash2,
-  HelpCircle,
-  Settings,
-  Keyboard,
-  Github,
-} from 'lucide-react';
-import { useTheme } from 'next-themes';
-import { useReviewStore } from '@/store';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -33,6 +19,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import { useReviewStore } from '@/store';
+import { Download, Github, HelpCircle, Keyboard, Moon, Settings, Sun, Trash2 } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { useState } from 'react';
 
 interface HeaderProps {
   className?: string;
@@ -50,7 +40,12 @@ export function Header({ className }: HeaderProps) {
   };
 
   return (
-    <header className={cn('border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60', className)}>
+    <header
+      className={cn(
+        'border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60',
+        className
+      )}
+    >
       <div className="flex h-14 items-center justify-between px-4">
         {/* Logo */}
         <div className="flex items-center gap-2">
@@ -110,7 +105,11 @@ export function Header({ className }: HeaderProps) {
                 Keyboard Shortcuts
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <a href="https://github.com/your-repo/loopdeck" target="_blank" rel="noopener noreferrer">
+                <a
+                  href="https://github.com/your-repo/loopdeck"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <Github className="h-4 w-4 mr-2" />
                   GitHub
                 </a>
@@ -170,9 +169,7 @@ export function Header({ className }: HeaderProps) {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Keyboard Shortcuts</DialogTitle>
-            <DialogDescription>
-              Speed up your workflow with these shortcuts
-            </DialogDescription>
+            <DialogDescription>Speed up your workflow with these shortcuts</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>

@@ -68,28 +68,30 @@ export function FileDropZone({ className, onImportComplete, compact }: FileDropZ
         className="absolute inset-0 cursor-pointer opacity-0"
         disabled={isLoading}
       />
-      <div className={cn(
-        "flex items-center text-center",
-        compact ? "flex-row gap-3" : "flex-col gap-2"
-      )}>
-        <div className={cn("rounded-full bg-muted", compact ? "p-2" : "p-3")}>
+      <div
+        className={cn(
+          'flex items-center text-center',
+          compact ? 'flex-row gap-3' : 'flex-col gap-2'
+        )}
+      >
+        <div className={cn('rounded-full bg-muted', compact ? 'p-2' : 'p-3')}>
           {isLoading ? (
-            <div className={cn(
-              "animate-spin rounded-full border-2 border-primary border-t-transparent",
-              compact ? "h-4 w-4" : "h-6 w-6"
-            )} />
+            <div
+              className={cn(
+                'animate-spin rounded-full border-2 border-primary border-t-transparent',
+                compact ? 'h-4 w-4' : 'h-6 w-6'
+              )}
+            />
           ) : (
-            <Upload className={cn("text-muted-foreground", compact ? "h-4 w-4" : "h-6 w-6")} />
+            <Upload className={cn('text-muted-foreground', compact ? 'h-4 w-4' : 'h-6 w-6')} />
           )}
         </div>
         <div className="space-y-1">
-          <p className={cn("font-medium", compact ? "text-xs" : "text-sm")}>
-            {isLoading ? 'Importing...' : (compact ? 'Import File' : 'Drop JSONL or JSON file here')}
+          <p className={cn('font-medium', compact ? 'text-xs' : 'text-sm')}>
+            {isLoading ? 'Importing...' : compact ? 'Import File' : 'Drop JSONL or JSON file here'}
           </p>
           {!compact && (
-            <p className="text-xs text-muted-foreground">
-              or click to browse (max 50MB)
-            </p>
+            <p className="text-xs text-muted-foreground">or click to browse (max 50MB)</p>
           )}
         </div>
         {!compact && (

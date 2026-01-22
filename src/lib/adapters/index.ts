@@ -113,11 +113,7 @@ export const DEFAULT_OTEL_MAPPINGS: OTelMappingConfig = {
       'llm.token_count.completion',
       'ai.usage.output_tokens',
     ],
-    total: [
-      'gen_ai.usage.total_tokens',
-      'llm.token_count.total',
-      'ai.usage.total_tokens',
-    ],
+    total: ['gen_ai.usage.total_tokens', 'llm.token_count.total', 'ai.usage.total_tokens'],
   },
   llmSpanNames: [
     'llm.chat',
@@ -128,12 +124,7 @@ export const DEFAULT_OTEL_MAPPINGS: OTelMappingConfig = {
     'OpenAI',
     'Anthropic',
   ],
-  retrieverSpanNames: [
-    'retriever',
-    'vectorstore',
-    'Retriever',
-    'VectorStoreRetriever',
-  ],
+  retrieverSpanNames: ['retriever', 'vectorstore', 'Retriever', 'VectorStoreRetriever'],
 };
 
 /**
@@ -208,4 +199,3 @@ export const adapterRegistry = new AdapterRegistry();
 // Re-export adapters for convenience
 export { langSmithAdapter } from './langsmith';
 export { otelAdapter } from './otel';
-

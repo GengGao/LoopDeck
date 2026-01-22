@@ -103,7 +103,7 @@ function getAttribute(span: OTelSpan, keys: string[]): unknown {
   // Try array format first
   if (span.attributes && Array.isArray(span.attributes)) {
     for (const key of keys) {
-      const attr = span.attributes.find(a => a.key === key);
+      const attr = span.attributes.find((a) => a.key === key);
       if (attr) {
         return getAttributeValue(attr.value);
       }
@@ -184,8 +184,12 @@ function isLLMSpan(span: OTelSpan, mappings: OTelMappingConfig): boolean {
   }
 
   // Check for LLM-specific attributes
-  const hasPrompt = mappings.promptAttributes.some(key => getAttribute(span, [key]) !== undefined);
-  const hasResponse = mappings.responseAttributes.some(key => getAttribute(span, [key]) !== undefined);
+  const hasPrompt = mappings.promptAttributes.some(
+    (key) => getAttribute(span, [key]) !== undefined
+  );
+  const hasResponse = mappings.responseAttributes.some(
+    (key) => getAttribute(span, [key]) !== undefined
+  );
 
   return hasPrompt || hasResponse;
 }
@@ -223,7 +227,10 @@ function getSpanType(span: OTelSpan, mappings: OTelMappingConfig): SpanType {
 /**
  * Extract prompt from span attributes
  */
-function extractPrompt(span: OTelSpan, mappings: OTelMappingConfig): { prompt: string; systemPrompt?: string } {
+function extractPrompt(
+  span: OTelSpan,
+  mappings: OTelMappingConfig
+): { prompt: string; systemPrompt?: string } {
   let prompt: unknown = undefined;
 
   // Try each configured prompt attribute
@@ -240,11 +247,17 @@ function extractPrompt(span: OTelSpan, mappings: OTelMappingConfig): { prompt: s
   // Handle array of messages
   if (Array.isArray(prompt)) {
     const messages = prompt as Array<{ role?: string; content?: string } | string>;
-    const systemMsg = messages.find(m => typeof m === 'object' && m.role === 'system') as { content?: string } | undefined;
-    const userMsg = messages.find(m => typeof m === 'object' && m.role === 'user') as { content?: string } | undefined;
+    const systemMsg = messages.find((m) => typeof m === 'object' && m.role === 'system') as
+      | { content?: string }
+      | undefined;
+    const userMsg = messages.find((m) => typeof m === 'object' && m.role === 'user') as
+      | { content?: string }
+      | undefined;
 
     return {
-      prompt: userMsg?.content || (typeof messages[0] === 'string' ? messages[0] : JSON.stringify(messages)),
+      prompt:
+        userMsg?.content ||
+        (typeof messages[0] === 'string' ? messages[0] : JSON.stringify(messages)),
       systemPrompt: systemMsg?.content,
     };
   }
@@ -252,8 +265,8 @@ function extractPrompt(span: OTelSpan, mappings: OTelMappingConfig): { prompt: s
   // Handle object with messages
   if (typeof prompt === 'object' && prompt !== null && 'messages' in (prompt as object)) {
     const msgObj = prompt as { messages: Array<{ role?: string; content?: string }> };
-    const systemMsg = msgObj.messages.find(m => m.role === 'system');
-    const userMsg = msgObj.messages.find(m => m.role === 'user');
+    const systemMsg = msgObj.messages.find((m) => m.role === 'system');
+    const userMsg = msgObj.messages.find((m) => m.role === 'user');
 
     return {
       prompt: userMsg?.content || '',
@@ -283,7 +296,9 @@ function extractResponse(span: OTelSpan, mappings: OTelMappingConfig): string {
 
   // Handle array of completions
   if (Array.isArray(response)) {
-    const completions = response as Array<{ content?: string; text?: string; message?: { content?: string } } | string>;
+    const completions = response as Array<
+      { content?: string; text?: string; message?: { content?: string } } | string
+    >;
     if (completions.length > 0) {
       const first = completions[0];
       if (typeof first === 'string') return first;
@@ -351,7 +366,10 @@ function extractTokenUsage(span: OTelSpan, mappings: OTelMappingConfig): number 
 /**
  * Extract context chunks from retriever spans
  */
-function extractContextFromRetrievers(spans: OTelSpan[], mappings: OTelMappingConfig): ContextChunk[] {
+function extractContextFromRetrievers(
+  spans: OTelSpan[],
+  mappings: OTelMappingConfig
+): ContextChunk[] {
   const chunks: ContextChunk[] = [];
 
   for (const span of spans) {
@@ -451,7 +469,7 @@ function extractSpans(data: OTelTraceExport): OTelSpan[] {
  * Find leaf LLM spans (spans with no LLM children)
  */
 function findLeafLLMSpans(spans: OTelSpan[], mappings: OTelMappingConfig): OTelSpan[] {
-  const llmSpans = spans.filter(s => isLLMSpan(s, mappings));
+  const llmSpans = spans.filter((s) => isLLMSpan(s, mappings));
 
   // Build parent-child map
   const childMap = new Map<string, Set<string>>();
@@ -464,12 +482,12 @@ function findLeafLLMSpans(spans: OTelSpan[], mappings: OTelMappingConfig): OTelS
   }
 
   // Find LLM spans that have no LLM children
-  const llmSpanIds = new Set(llmSpans.map(s => s.spanId));
-  const leafLLMSpans = llmSpans.filter(span => {
+  const llmSpanIds = new Set(llmSpans.map((s) => s.spanId));
+  const leafLLMSpans = llmSpans.filter((span) => {
     const children = childMap.get(span.spanId);
     if (!children) return true;
     // Check if any child is an LLM span
-    return !Array.from(children).some(childId => llmSpanIds.has(childId));
+    return !Array.from(children).some((childId) => llmSpanIds.has(childId));
   });
 
   return leafLLMSpans;
@@ -521,12 +539,16 @@ function convertSpanToReviewItem(
       system_prompt: systemPrompt,
       context_chunks: contextChunks,
     },
-    outputs: response ? [{
-      model_id: model,
-      text: response,
-      token_usage: tokenUsage,
-      latency_ms: latencyMs,
-    }] : [],
+    outputs: response
+      ? [
+          {
+            model_id: model,
+            text: response,
+            token_usage: tokenUsage,
+            latency_ms: latencyMs,
+          },
+        ]
+      : [],
     human_feedback: {},
   };
 }
@@ -577,29 +599,33 @@ export const otelAdapter: TraceAdapter<OTelTraceExport | OTelSpan | OTelSpan[]> 
     const leafLLMSpans = findLeafLLMSpans(spans, mappings);
 
     if (leafLLMSpans.length > 0) {
-      const items = leafLLMSpans.map(span =>
+      const items = leafLLMSpans.map((span) =>
         convertSpanToReviewItem(span, contextChunks, mappings, now)
       );
       return items.length === 1 ? items[0] : items;
     }
 
     // No LLM spans found, try to convert all spans with prompt/response data
-    const llmLikeSpans = spans.filter(s => {
-      const hasPrompt = mappings.promptAttributes.some(key => getAttribute(s, [key]) !== undefined);
-      const hasResponse = mappings.responseAttributes.some(key => getAttribute(s, [key]) !== undefined);
+    const llmLikeSpans = spans.filter((s) => {
+      const hasPrompt = mappings.promptAttributes.some(
+        (key) => getAttribute(s, [key]) !== undefined
+      );
+      const hasResponse = mappings.responseAttributes.some(
+        (key) => getAttribute(s, [key]) !== undefined
+      );
       return hasPrompt || hasResponse;
     });
 
     if (llmLikeSpans.length > 0) {
-      const items = llmLikeSpans.map(span =>
+      const items = llmLikeSpans.map((span) =>
         convertSpanToReviewItem(span, contextChunks, mappings, now)
       );
       return items.length === 1 ? items[0] : items;
     }
 
     // Last resort: convert root spans
-    const rootSpans = spans.filter(s => !s.parentSpanId);
-    const items = rootSpans.map(span =>
+    const rootSpans = spans.filter((s) => !s.parentSpanId);
+    const items = rootSpans.map((span) =>
       convertSpanToReviewItem(span, contextChunks, mappings, now)
     );
 

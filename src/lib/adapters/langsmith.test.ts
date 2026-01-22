@@ -23,9 +23,7 @@ describe('LangSmith Adapter', () => {
 
     it('should detect a LangSmith export with runs array', () => {
       const data = {
-        runs: [
-          { run_id: 'run_1', inputs: {}, outputs: {} },
-        ],
+        runs: [{ run_id: 'run_1', inputs: {}, outputs: {} }],
       };
       expect(langSmithAdapter.detect(data)).toBe(true);
     });
@@ -37,11 +35,15 @@ describe('LangSmith Adapter', () => {
 
     it('should not detect OpenTelemetry data', () => {
       const data = {
-        resourceSpans: [{
-          scopeSpans: [{
-            spans: [{ traceId: 'abc', spanId: '123' }],
-          }],
-        }],
+        resourceSpans: [
+          {
+            scopeSpans: [
+              {
+                spans: [{ traceId: 'abc', spanId: '123' }],
+              },
+            ],
+          },
+        ],
       };
       expect(langSmithAdapter.detect(data)).toBe(false);
     });
@@ -53,9 +55,7 @@ describe('LangSmith Adapter', () => {
         run_id: 'run_abc123',
         run_type: 'llm',
         inputs: {
-          messages: [
-            { role: 'user', content: 'What is TypeScript?' },
-          ],
+          messages: [{ role: 'user', content: 'What is TypeScript?' }],
         },
         outputs: {
           generations: [[{ text: 'TypeScript is a typed superset of JavaScript.' }]],

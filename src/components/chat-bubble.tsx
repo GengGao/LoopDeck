@@ -1,12 +1,12 @@
 'use client';
 
-import ReactMarkdown from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
-import type { ModelOutput } from '@/types/review';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import type { ModelOutput } from '@/types/review';
+import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 
 interface ChatBubbleProps {
   role: 'user' | 'assistant' | 'system';
@@ -33,13 +33,7 @@ export function ChatBubble({
   const isSystem = role === 'system';
 
   return (
-    <div
-      className={cn(
-        'flex w-full',
-        isUser ? 'justify-end' : 'justify-start',
-        className
-      )}
-    >
+    <div className={cn('flex w-full', isUser ? 'justify-end' : 'justify-start', className)}>
       <Card
         className={cn(
           'max-w-[85%] transition-all',
@@ -74,7 +68,7 @@ export function ChatBubble({
                 code({ node, className, children, ...props }) {
                   const match = /language-(\w+)/.exec(className || '');
                   const isInline = !match;
-                  
+
                   if (isInline) {
                     return (
                       <code className="bg-muted px-1 py-0.5 rounded text-sm" {...props}>
@@ -139,7 +133,6 @@ export function ModelComparison({
     return (
       <div className={className}>
         <ChatBubble
-          role="assistant"
           content={outputs[0].text}
           modelId={outputs[0].model_id}
           tokenUsage={outputs[0].token_usage}
@@ -153,7 +146,10 @@ export function ModelComparison({
 
   // Side-by-side comparison for multiple outputs
   return (
-    <div className={cn('grid gap-4', className)} style={{ gridTemplateColumns: `repeat(${Math.min(outputs.length, 3)}, 1fr)` }}>
+    <div
+      className={cn('grid gap-4', className)}
+      style={{ gridTemplateColumns: `repeat(${Math.min(outputs.length, 3)}, 1fr)` }}
+    >
       {outputs.map((output, index) => (
         <Card
           key={output.model_id}
@@ -170,9 +166,7 @@ export function ModelComparison({
                 <Badge variant="outline">#{index + 1}</Badge>
                 <Badge variant="secondary">{output.model_id}</Badge>
               </div>
-              {selectedModelId === output.model_id && (
-                <Badge variant="success">Selected</Badge>
-              )}
+              {selectedModelId === output.model_id && <Badge variant="success">Selected</Badge>}
             </div>
             <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
               {output.token_usage > 0 && <span>{output.token_usage} tokens</span>}
@@ -186,7 +180,7 @@ export function ModelComparison({
                   code({ node, className, children, ...props }) {
                     const match = /language-(\w+)/.exec(className || '');
                     const isInline = !match;
-                    
+
                     if (isInline) {
                       return (
                         <code className="bg-muted px-1 py-0.5 rounded text-sm" {...props}>

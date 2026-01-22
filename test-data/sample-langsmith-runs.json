@@ -7,14 +7,21 @@
     "end_time": "2026-01-10T10:00:02.500Z",
     "inputs": {
       "messages": [
-        { "role": "system", "content": "You are a helpful assistant that answers questions about programming." },
+        {
+          "role": "system",
+          "content": "You are a helpful assistant that answers questions about programming."
+        },
         { "role": "user", "content": "What is the difference between let and const in JavaScript?" }
       ]
     },
     "outputs": {
-      "generations": [[{
-        "text": "In JavaScript, `let` and `const` are both used for variable declarations, but they have key differences:\n\n1. **Reassignment**: Variables declared with `let` can be reassigned, while `const` variables cannot be reassigned after initialization.\n\n2. **Initialization**: `const` requires initialization at declaration time, `let` does not.\n\n3. **Block scope**: Both are block-scoped, unlike `var` which is function-scoped.\n\nExample:\n```javascript\nlet x = 1;\nx = 2; // OK\n\nconst y = 1;\ny = 2; // Error: Assignment to constant variable\n```"
-      }]]
+      "generations": [
+        [
+          {
+            "text": "In JavaScript, `let` and `const` are both used for variable declarations, but they have key differences:\n\n1. **Reassignment**: Variables declared with `let` can be reassigned, while `const` variables cannot be reassigned after initialization.\n\n2. **Initialization**: `const` requires initialization at declaration time, `let` does not.\n\n3. **Block scope**: Both are block-scoped, unlike `var` which is function-scoped.\n\nExample:\n```javascript\nlet x = 1;\nx = 2; // OK\n\nconst y = 1;\ny = 2; // Error: Assignment to constant variable\n```"
+          }
+        ]
+      ]
     },
     "total_tokens": 245,
     "prompt_tokens": 52,
@@ -68,13 +75,20 @@
         "inputs": {
           "messages": [
             { "role": "system", "content": "Answer the question based on the provided context." },
-            { "role": "user", "content": "Context:\nuseState is a Hook that lets you add React state to function components...\n\nQuestion: How does React's useState hook work?" }
+            {
+              "role": "user",
+              "content": "Context:\nuseState is a Hook that lets you add React state to function components...\n\nQuestion: How does React's useState hook work?"
+            }
           ]
         },
         "outputs": {
-          "generations": [[{
-            "text": "The useState hook in React is a built-in hook that allows functional components to manage state. It returns an array with two elements: the current state value and a function to update it.\n\nBasic usage:\n```jsx\nconst [count, setCount] = useState(0);\n```\n\nWhen you call the setter function (setCount), React schedules a re-render of the component with the new state value."
-          }]]
+          "generations": [
+            [
+              {
+                "text": "The useState hook in React is a built-in hook that allows functional components to manage state. It returns an array with two elements: the current state value and a function to update it.\n\nBasic usage:\n```jsx\nconst [count, setCount] = useState(0);\n```\n\nWhen you call the setter function (setCount), React schedules a re-render of the component with the new state value."
+              }
+            ]
+          ]
         },
         "total_tokens": 180,
         "model": "gpt-4"
@@ -89,14 +103,16 @@
     "start_time": "2026-01-10T10:10:00.000Z",
     "end_time": "2026-01-10T10:10:03.000Z",
     "inputs": {
-      "messages": [
-        { "role": "user", "content": "Explain async/await in TypeScript" }
-      ]
+      "messages": [{ "role": "user", "content": "Explain async/await in TypeScript" }]
     },
     "outputs": {
-      "generations": [[{
-        "text": "Async/await in TypeScript provides a cleaner syntax for handling Promises:\n\n1. **async functions** always return a Promise\n2. **await** pauses execution until a Promise resolves\n\n```typescript\nasync function fetchData(): Promise<Data> {\n  const response = await fetch('/api/data');\n  const data = await response.json();\n  return data;\n}\n```\n\nTypeScript adds type safety by inferring Promise types and catching errors at compile time."
-      }]]
+      "generations": [
+        [
+          {
+            "text": "Async/await in TypeScript provides a cleaner syntax for handling Promises:\n\n1. **async functions** always return a Promise\n2. **await** pauses execution until a Promise resolves\n\n```typescript\nasync function fetchData(): Promise<Data> {\n  const response = await fetch('/api/data');\n  const data = await response.json();\n  return data;\n}\n```\n\nTypeScript adds type safety by inferring Promise types and catching errors at compile time."
+          }
+        ]
+      ]
     },
     "total_tokens": 156,
     "model": "claude-3-opus",

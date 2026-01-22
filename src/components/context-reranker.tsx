@@ -1,32 +1,32 @@
 'use client';
 
-import { useMemo } from 'react';
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { GripVertical, Trash2, RotateCcw } from 'lucide-react';
-import type { ContextChunk } from '@/types/review';
-import { useReviewStore } from '@/store';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { cn, getScoreEmoji, truncateText, estimateTokenCount } from '@/lib/utils';
+import { cn, estimateTokenCount, getScoreEmoji } from '@/lib/utils';
+import { useReviewStore } from '@/store';
+import type { ContextChunk } from '@/types/review';
+import {
+  DndContext,
+  type DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  arrayMove,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { GripVertical, RotateCcw, Trash2 } from 'lucide-react';
+import { useMemo } from 'react';
 
 interface SortableChunkProps {
   chunk: ContextChunk;
@@ -79,7 +79,13 @@ function SortableChunk({ chunk, index, onExclude, onRestore }: SortableChunkProp
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Badge
-                      variant={chunk.score >= 0.9 ? 'success' : chunk.score >= 0.7 ? 'warning' : 'destructive'}
+                      variant={
+                        chunk.score >= 0.9
+                          ? 'success'
+                          : chunk.score >= 0.7
+                            ? 'warning'
+                            : 'destructive'
+                      }
                       className="text-xs"
                     >
                       {getScoreEmoji(chunk.score)} {(chunk.score * 100).toFixed(0)}%
@@ -167,16 +173,12 @@ export function ContextReranker({ itemId, chunks, className }: ContextRerankerPr
   };
 
   const handleExclude = (chunkId: string) => {
-    const updatedChunks = chunks.map((c) =>
-      c.id === chunkId ? { ...c, excluded: true } : c
-    );
+    const updatedChunks = chunks.map((c) => (c.id === chunkId ? { ...c, excluded: true } : c));
     updateContextChunks(itemId, updatedChunks);
   };
 
   const handleRestore = (chunkId: string) => {
-    const updatedChunks = chunks.map((c) =>
-      c.id === chunkId ? { ...c, excluded: false } : c
-    );
+    const updatedChunks = chunks.map((c) => (c.id === chunkId ? { ...c, excluded: false } : c));
     updateContextChunks(itemId, updatedChunks);
   };
 
@@ -230,9 +232,7 @@ export function ContextReranker({ itemId, chunks, className }: ContextRerankerPr
               <>
                 <div className="flex items-center gap-2 pt-4 pb-2">
                   <Trash2 className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium text-muted-foreground">
-                    Excluded Chunks
-                  </span>
+                  <span className="text-sm font-medium text-muted-foreground">Excluded Chunks</span>
                 </div>
                 {excludedChunks.map((chunk, index) => (
                   <SortableChunk

@@ -68,7 +68,7 @@ export function estimateTokenCount(text: string): number {
 /**
  * Download a file
  */
-export function downloadFile(content: string, filename: string, mimeType: string = 'application/json') {
+export function downloadFile(content: string, filename: string, mimeType = 'application/json') {
   const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');

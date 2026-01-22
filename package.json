@@ -2,7 +2,7 @@
   "name": "loopdeck",
   "version": "0.1.0",
   "private": true,
-  "description": "Open-source UI component library for reviewing, debugging, and curating LLM outputs",
+  "description": "Open-source Dev tool for reviewing, debugging, annotating and curating LLM outputs",
   "license": "MIT",
   "scripts": {
     "dev": "next dev -p 3001",
@@ -66,6 +66,7 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/uuid": "^10.0.0",
     "@vitejs/plugin-react": "^4.3.2",
+    "@vitest/coverage-v8": "^2.1.9",
     "autoprefixer": "^10.4.20",
     "jsdom": "^25.0.1",
     "postcss": "^8.4.47",

@@ -1,5 +1,5 @@
-import Dexie, { type EntityTable } from 'dexie';
 import type { ReviewItem } from '@/types/review';
+import Dexie, { type EntityTable } from 'dexie';
 
 // Database schema version
 const DB_VERSION = 1;
@@ -115,7 +115,10 @@ export const dbOperations = {
   /**
    * Update human feedback
    */
-  async updateHumanFeedback(id: string, feedback: Partial<ReviewItem['human_feedback']>): Promise<void> {
+  async updateHumanFeedback(
+    id: string,
+    feedback: Partial<ReviewItem['human_feedback']>
+  ): Promise<void> {
     const item = await db.reviewItems.get(id);
     if (item) {
       await db.reviewItems.update(id, {
@@ -181,10 +184,14 @@ export const dbOperations = {
     pageSize: number,
     status?: ReviewItem['status']
   ): Promise<{ items: ReviewItem[]; total: number }> {
-    let collection = db.reviewItems.orderBy('created_at').reverse();
+    const collection = db.reviewItems.orderBy('created_at').reverse();
 
     if (status) {
-      const items = await db.reviewItems.where('status').equals(status).reverse().sortBy('created_at');
+      const items = await db.reviewItems
+        .where('status')
+        .equals(status)
+        .reverse()
+        .sortBy('created_at');
       const total = items.length;
       const paginatedItems = items.slice((page - 1) * pageSize, page * pageSize);
       return { items: paginatedItems, total };

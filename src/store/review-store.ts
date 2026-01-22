@@ -1,9 +1,9 @@
+import { dbOperations } from '@/lib/db';
+import { exportForTraining, exportToJsonl, parseJsonlFile } from '@/lib/jsonl';
+import { downloadFile } from '@/lib/utils';
+import type { ReviewFilters, ReviewItem, ReviewStats } from '@/types/review';
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
-import type { ReviewItem, ReviewFilters, ReviewStats } from '@/types/review';
-import { dbOperations } from '@/lib/db';
-import { parseJsonlFile, exportToJsonl, exportForTraining } from '@/lib/jsonl';
-import { downloadFile } from '@/lib/utils';
 
 interface ReviewStore {
   // State
@@ -28,7 +28,10 @@ interface ReviewStore {
   updateItemStatus: (id: string, status: ReviewItem['status']) => Promise<void>;
   bulkUpdateStatus: (status: ReviewItem['status']) => Promise<void>;
   updateContextChunks: (id: string, chunks: ReviewItem['input']['context_chunks']) => Promise<void>;
-  updateHumanFeedback: (id: string, feedback: Partial<ReviewItem['human_feedback']>) => Promise<void>;
+  updateHumanFeedback: (
+    id: string,
+    feedback: Partial<ReviewItem['human_feedback']>
+  ) => Promise<void>;
   deleteItems: (ids: string[]) => Promise<void>;
 
   // Import/Export
@@ -199,7 +202,10 @@ export const useReviewStore = create<ReviewStore>()(
         };
       } catch (error) {
         set({ isLoading: false, error: error instanceof Error ? error.message : 'Import failed' });
-        return { success: false, message: error instanceof Error ? error.message : 'Import failed' };
+        return {
+          success: false,
+          message: error instanceof Error ? error.message : 'Import failed',
+        };
       }
     },
 
@@ -212,7 +218,9 @@ export const useReviewStore = create<ReviewStore>()(
         itemsToExport = items.filter((item) => item.status === filters.status);
       } else {
         // By default, export approved and modified items
-        itemsToExport = items.filter((item) => item.status === 'approved' || item.status === 'modified');
+        itemsToExport = items.filter(
+          (item) => item.status === 'approved' || item.status === 'modified'
+        );
       }
 
       if (itemsToExport.length === 0) {
@@ -265,9 +273,7 @@ export const useReviewStore = create<ReviewStore>()(
 
       // Filter by tags
       if (filters.tags && filters.tags.length > 0) {
-        filtered = filtered.filter((item) =>
-          filters.tags!.some((tag) => item.tags?.includes(tag))
-        );
+        filtered = filtered.filter((item) => filters.tags!.some((tag) => item.tags?.includes(tag)));
       }
 
       // Filter by model

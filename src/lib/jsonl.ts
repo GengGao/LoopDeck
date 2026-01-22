@@ -76,7 +76,7 @@ function parseJsonData(data: unknown): ImportResult {
   if (Array.isArray(data)) {
     // Check if it's an array of LangSmith runs
     const langSmithAdapter = adapterRegistry.get('langsmith');
-    if (langSmithAdapter && langSmithAdapter.detect(data)) {
+    if (langSmithAdapter?.detect(data)) {
       try {
         const result = langSmithAdapter.normalize(data);
         const normalized = Array.isArray(result) ? result : [result];
@@ -271,7 +271,7 @@ function convertOpenAIFineTuneFormat(data: Record<string, unknown>, now: string)
   // Extract context chunks if present in metadata
   const contextChunks: ContextChunk[] = [];
   if (data.context && Array.isArray(data.context)) {
-    (data.context as Array<Record<string, unknown>>).forEach((chunk) => {
+    for (const chunk of data.context as Array<Record<string, unknown>>) {
       const metadata = chunk.metadata as Record<string, unknown> | undefined;
       contextChunks.push({
         id: String(chunk.id || uuidv4()),
@@ -280,7 +280,7 @@ function convertOpenAIFineTuneFormat(data: Record<string, unknown>, now: string)
         score: Number(chunk.score || chunk.similarity || 0),
         metadata: metadata,
       });
-    });
+    }
   }
 
   return {
@@ -321,7 +321,7 @@ function convertGenericFormat(data: Record<string, unknown>, now: string): Revie
 
     // Extract context_chunks from input object
     if (inputObj.context_chunks && Array.isArray(inputObj.context_chunks)) {
-      (inputObj.context_chunks as Array<Record<string, unknown>>).forEach((chunk) => {
+      for (const chunk of inputObj.context_chunks as Array<Record<string, unknown>>) {
         const metadata = chunk.metadata as Record<string, unknown> | undefined;
         inputContextChunks.push({
           id: String(chunk.id || uuidv4()),
@@ -330,7 +330,7 @@ function convertGenericFormat(data: Record<string, unknown>, now: string): Revie
           score: Number(chunk.score || chunk.similarity || chunk.relevance_score || 0),
           metadata: metadata,
         });
-      });
+      }
     }
   } else {
     prompt = String(data.prompt || data.question || data.input || '');
@@ -344,7 +344,7 @@ function convertGenericFormat(data: Record<string, unknown>, now: string): Revie
   const contextField = data.context || data.contexts || data.documents || data.chunks;
 
   if (Array.isArray(contextField)) {
-    (contextField as Array<Record<string, unknown> | string>).forEach((chunk) => {
+    for (const chunk of contextField as Array<Record<string, unknown> | string>) {
       if (typeof chunk === 'string') {
         contextChunks.push({
           id: uuidv4(),
@@ -362,7 +362,7 @@ function convertGenericFormat(data: Record<string, unknown>, now: string): Revie
           metadata: metadata,
         });
       }
-    });
+    }
   }
 
   return {

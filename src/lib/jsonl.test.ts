@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 // Mock uuid before importing
 vi.mock('uuid', () => ({
@@ -9,7 +9,7 @@ vi.mock('uuid', () => ({
 function createMockFile(content: string, name: string, sizeOverride?: number): File {
   const blob = new Blob([content], { type: 'application/json' });
   const file = new File([blob], name, { type: 'application/json' });
-  
+
   // Ensure text() method exists (jsdom may not fully support it)
   if (typeof file.text !== 'function') {
     Object.defineProperty(file, 'text', {
@@ -17,11 +17,11 @@ function createMockFile(content: string, name: string, sizeOverride?: number): F
       writable: false,
     });
   }
-  
+
   if (sizeOverride !== undefined) {
     Object.defineProperty(file, 'size', { value: sizeOverride });
   }
-  
+
   return file;
 }
 
@@ -111,7 +111,7 @@ describe('JSONL Parser', () => {
       trace_metadata: {
         span_type: 'llm',
         source: 'hivemind',
-        processing_time_ms: 53775
+        processing_time_ms: 53775,
       },
       input: {
         prompt: 'test prompt about amiibo',
@@ -122,9 +122,9 @@ describe('JSONL Parser', () => {
             text: 'pricecharting.com',
             source: 'https://www.pricecharting.com/game/amiibo/celica',
             score: 0.9,
-            metadata: { type: 'web_grounding' }
-          }
-        ]
+            metadata: { type: 'web_grounding' },
+          },
+        ],
       },
       outputs: [
         {
@@ -132,11 +132,11 @@ describe('JSONL Parser', () => {
           text: '{"name": "Unknown Item"}',
           token_usage: 11521,
           latency_ms: 53775,
-          metadata: { cost: 0.002 }
-        }
+          metadata: { cost: 0.002 },
+        },
       ],
       human_feedback: {},
-      tags: ['auto-export', 'dev']
+      tags: ['auto-export', 'dev'],
     });
     const file = createMockFile(hivemindJson, 'hivemind-stream.json');
 
@@ -146,12 +146,14 @@ describe('JSONL Parser', () => {
     expect(result.success).toBe(true);
     expect(result.itemsImported).toBe(1);
     expect(result.errors).toHaveLength(0);
-    
+
     const item = result.items[0];
     expect(item.id).toBe('5f787071-b55e-4107-82fe-e9c6d6f94c00');
     expect(item.status).toBe('approved');
     expect(item.input.prompt).toBe('test prompt about amiibo');
-    expect(item.input.system_prompt).toBe('You are HiveMind AI, a specialist in identifying collectibles');
+    expect(item.input.system_prompt).toBe(
+      'You are HiveMind AI, a specialist in identifying collectibles'
+    );
     expect(item.input.context_chunks).toHaveLength(1);
     expect(item.input.context_chunks[0].text).toBe('pricecharting.com');
     expect(item.outputs[0].model_id).toBe('Gemini 3 Flash');
@@ -175,9 +177,7 @@ describe('JSONL Export', () => {
           system_prompt: 'Be helpful',
           context_chunks: [],
         },
-        outputs: [
-          { model_id: 'gpt-4', text: 'Hi!', token_usage: 10, latency_ms: 100 },
-        ],
+        outputs: [{ model_id: 'gpt-4', text: 'Hi!', token_usage: 10, latency_ms: 100 }],
         human_feedback: {},
       },
     ];
@@ -204,9 +204,7 @@ describe('JSONL Export', () => {
           prompt: 'Hello',
           context_chunks: [],
         },
-        outputs: [
-          { model_id: 'gpt-4', text: 'Original', token_usage: 10, latency_ms: 100 },
-        ],
+        outputs: [{ model_id: 'gpt-4', text: 'Original', token_usage: 10, latency_ms: 100 }],
         human_feedback: {
           corrected_text: 'Corrected response',
         },

@@ -2,7 +2,9 @@
 
 Open-source UI component library for reviewing, debugging, and curating Large Language Model (LLM) outputs.
 
-![LoopDeck Screenshot](docs/screenshot.png)
+![LoopDeck UI](screenshots/LoopDeck%20UI.png)
+
+![Context Re-ordering](screenshots/Context%20Re-ordering.png)
 
 ## Features
 
@@ -30,7 +32,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3001](http://localhost:3001) in your browser.
 
 ## Usage
 
@@ -39,28 +41,43 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 Drop a JSONL or JSON file on the upload zone. Supported formats:
 
 **OpenAI Fine-tuning Format:**
+
 ```json
-{"messages":[{"role":"system","content":"..."},{"role":"user","content":"..."},{"role":"assistant","content":"..."}]}
+{
+  "messages": [
+    { "role": "system", "content": "..." },
+    { "role": "user", "content": "..." },
+    { "role": "assistant", "content": "..." }
+  ]
+}
 ```
 
 **LangSmith Run Export:**
+
 ```json
 {"run_id":"...","inputs":{"messages":[...]},"outputs":{"generations":[[{"text":"..."}]]},"run_type":"llm"}
 ```
 
 **OpenTelemetry Trace (OTLP JSON):**
+
 ```json
 {"resourceSpans":[{"scopeSpans":[{"spans":[{"traceId":"...","spanId":"...","name":"llm.chat","attributes":[...]}]}]}]}
 ```
 
 **RAG Format with Context:**
+
 ```json
-{"prompt":"...","response":"...","context":[{"text":"...","source":"...","score":0.95}]}
+{
+  "prompt": "...",
+  "response": "...",
+  "context": [{ "text": "...", "source": "...", "score": 0.95 }]
+}
 ```
 
 **Generic Format:**
+
 ```json
-{"prompt":"...","response":"..."}
+{ "prompt": "...", "response": "..." }
 ```
 
 > **Note:** LangSmith and OpenTelemetry imports extract only leaf LLM spans by default. Hierarchical trace visualization is planned for Phase 2.
@@ -77,12 +94,12 @@ Drop a JSONL or JSON file on the upload zone. Supported formats:
 
 ### Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| `1`, `2`, `3` | Vote for model outputs |
-| `Tab` | Navigate between items/chunks |
-| `↑`, `↓` | Move focus up/down |
-| `Ctrl+Shift+E` | Open export dialog |
+| Shortcut       | Action                        |
+| -------------- | ----------------------------- |
+| `1`, `2`, `3`  | Vote for model outputs        |
+| `Tab`          | Navigate between items/chunks |
+| `↑`, `↓`       | Move focus up/down            |
+| `Ctrl+Shift+E` | Open export dialog            |
 
 ## Tech Stack
 
@@ -142,11 +159,11 @@ src/
 ```typescript
 interface ReviewItem {
   id: string;
-  status: 'pending' | 'approved' | 'rejected' | 'modified';
+  status: "pending" | "approved" | "rejected" | "modified";
   trace_metadata?: {
-    trace_id?: string;    // Original trace ID (LangSmith run_id, OTel traceId)
-    span_type?: 'llm' | 'retriever' | 'chain' | 'tool';
-    source?: 'langsmith' | 'otel' | 'manual';
+    trace_id?: string; // Original trace ID (LangSmith run_id, OTel traceId)
+    span_type?: "llm" | "retriever" | "chain" | "tool";
+    source?: "langsmith" | "otel" | "manual";
     error?: string;
   };
   input: {

@@ -1,19 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Search, Filter, SortAsc, SortDesc, X } from 'lucide-react';
-import { useReviewStore } from '@/store';
-import type { ReviewStatus } from '@/types/review';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +10,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
+import { useReviewStore } from '@/store';
+import type { ReviewStatus } from '@/types/review';
+import { Filter, Search, SortAsc, SortDesc, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
 interface FilterBarProps {
   className?: string;
@@ -31,12 +31,41 @@ interface FilterBarProps {
 export function FilterBar({ className }: FilterBarProps) {
   const { filters, setFilters, resetFilters, stats, items } = useReviewStore();
   const [searchValue, setSearchValue] = useState(filters.search || '');
+  const searchTimeoutRef = useRef<NodeJS.Timeout>();
 
   // Get unique models from items
   const models = [...new Set(items.flatMap((item) => item.outputs.map((o) => o.model_id)))];
 
+  // Update search filter with debounce
+  useEffect(() => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    searchTimeoutRef.current = setTimeout(() => {
+      setFilters({ search: searchValue });
+    }, 300); // 300ms debounce
+
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [searchValue, setFilters]);
+
+  // Sync local search value with store filters
+  // biome-ignore lint:correctness/useExhaustiveDependencies
+  useEffect(() => {
+    if (filters.search !== searchValue) {
+      setSearchValue(filters.search || '');
+    }
+  }, [filters.search]);
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Immediate update on submit
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
     setFilters({ search: searchValue });
   };
 

@@ -1,9 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Download, Trash2, CheckCircle, XCircle, MoreHorizontal } from 'lucide-react';
-import { useReviewStore } from '@/store';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
@@ -11,7 +9,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   DropdownMenu,
@@ -21,8 +18,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
+import { useReviewStore } from '@/store';
+import { CheckCircle, MoreHorizontal, Trash2, XCircle } from 'lucide-react';
+import { useState } from 'react';
 
 interface BulkActionsProps {
   className?: string;
@@ -133,8 +132,8 @@ export function BulkActions({ className }: BulkActionsProps) {
           <DialogHeader>
             <DialogTitle>Delete {selectedCount} items?</DialogTitle>
             <DialogDescription>
-              This action cannot be undone. These items will be permanently removed from your
-              local database.
+              This action cannot be undone. These items will be permanently removed from your local
+              database.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

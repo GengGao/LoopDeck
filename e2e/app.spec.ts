@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('LoopDeck', () => {
   test.beforeEach(async ({ page }) => {
@@ -22,14 +22,14 @@ test.describe('LoopDeck', () => {
   test('should toggle theme', async ({ page }) => {
     // Find the theme toggle button
     const themeToggle = page.getByRole('button', { name: /toggle theme/i });
-    
+
     // Get initial state
     const html = page.locator('html');
     const initialClass = await html.getAttribute('class');
-    
+
     // Click to toggle
     await themeToggle.click();
-    
+
     // Verify class changed
     const newClass = await html.getAttribute('class');
     expect(newClass).not.toBe(initialClass);

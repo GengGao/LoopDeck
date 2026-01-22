@@ -23,9 +23,20 @@
               "endTimeUnixNano": "1736506802500000000",
               "attributes": [
                 { "key": "gen_ai.request.model", "value": { "stringValue": "gpt-4" } },
-                { "key": "gen_ai.prompt.0.content", "value": { "stringValue": "You are a helpful coding assistant." } },
-                { "key": "gen_ai.prompt.1.content", "value": { "stringValue": "How do I center a div in CSS?" } },
-                { "key": "gen_ai.completion.0.content", "value": { "stringValue": "There are several ways to center a div in CSS:\n\n1. **Flexbox** (most common):\n```css\n.parent {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n```\n\n2. **Grid**:\n```css\n.parent {\n  display: grid;\n  place-items: center;\n}\n```\n\n3. **Absolute positioning**:\n```css\n.child {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n}\n```" } },
+                {
+                  "key": "gen_ai.prompt.0.content",
+                  "value": { "stringValue": "You are a helpful coding assistant." }
+                },
+                {
+                  "key": "gen_ai.prompt.1.content",
+                  "value": { "stringValue": "How do I center a div in CSS?" }
+                },
+                {
+                  "key": "gen_ai.completion.0.content",
+                  "value": {
+                    "stringValue": "There are several ways to center a div in CSS:\n\n1. **Flexbox** (most common):\n```css\n.parent {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n```\n\n2. **Grid**:\n```css\n.parent {\n  display: grid;\n  place-items: center;\n}\n```\n\n3. **Absolute positioning**:\n```css\n.child {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n}\n```"
+                  }
+                },
                 { "key": "gen_ai.usage.input_tokens", "value": { "intValue": 25 } },
                 { "key": "gen_ai.usage.output_tokens", "value": { "intValue": 120 } }
               ],
@@ -40,10 +51,21 @@
               "startTimeUnixNano": "1736506800100000000",
               "endTimeUnixNano": "1736506800500000000",
               "attributes": [
-                { "key": "documents", "value": { "arrayValue": { "values": [
-                  { "stringValue": "Flexbox is a CSS layout model that provides an efficient way to align and distribute space among items in a container." },
-                  { "stringValue": "CSS Grid Layout is a two-dimensional layout system for the web, allowing content to be laid out in rows and columns." }
-                ] } } }
+                {
+                  "key": "documents",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "Flexbox is a CSS layout model that provides an efficient way to align and distribute space among items in a container."
+                        },
+                        {
+                          "stringValue": "CSS Grid Layout is a two-dimensional layout system for the web, allowing content to be laid out in rows and columns."
+                        }
+                      ]
+                    }
+                  }
+                }
               ],
               "status": { "code": 1 }
             }
@@ -53,9 +75,7 @@
     },
     {
       "resource": {
-        "attributes": [
-          { "key": "service.name", "value": { "stringValue": "rag-chatbot" } }
-        ]
+        "attributes": [{ "key": "service.name", "value": { "stringValue": "rag-chatbot" } }]
       },
       "scopeSpans": [
         {
@@ -73,12 +93,26 @@
               "endTimeUnixNano": "1736507103000000000",
               "attributes": [
                 { "key": "llm.model", "value": { "stringValue": "claude-3-opus" } },
-                { "key": "llm.prompts", "value": { "arrayValue": { "values": [
-                  { "stringValue": "Explain the concept of closures in JavaScript" }
-                ] } } },
-                { "key": "llm.responses", "value": { "arrayValue": { "values": [
-                  { "stringValue": "A closure in JavaScript is a function that has access to variables from its outer (enclosing) scope, even after the outer function has returned.\n\n```javascript\nfunction outer() {\n  const message = 'Hello';\n  \n  function inner() {\n    console.log(message); // Has access to 'message'\n  }\n  \n  return inner;\n}\n\nconst greeting = outer();\ngreeting(); // Logs 'Hello'\n```\n\nClosures are commonly used for:\n- Data privacy/encapsulation\n- Function factories\n- Maintaining state in async operations" }
-                ] } } },
+                {
+                  "key": "llm.prompts",
+                  "value": {
+                    "arrayValue": {
+                      "values": [{ "stringValue": "Explain the concept of closures in JavaScript" }]
+                    }
+                  }
+                },
+                {
+                  "key": "llm.responses",
+                  "value": {
+                    "arrayValue": {
+                      "values": [
+                        {
+                          "stringValue": "A closure in JavaScript is a function that has access to variables from its outer (enclosing) scope, even after the outer function has returned.\n\n```javascript\nfunction outer() {\n  const message = 'Hello';\n  \n  function inner() {\n    console.log(message); // Has access to 'message'\n  }\n  \n  return inner;\n}\n\nconst greeting = outer();\ngreeting(); // Logs 'Hello'\n```\n\nClosures are commonly used for:\n- Data privacy/encapsulation\n- Function factories\n- Maintaining state in async operations"
+                        }
+                      ]
+                    }
+                  }
+                },
                 { "key": "llm.token_count.prompt", "value": { "intValue": 12 } },
                 { "key": "llm.token_count.completion", "value": { "intValue": 145 } }
               ],
@@ -90,9 +124,7 @@
     },
     {
       "resource": {
-        "attributes": [
-          { "key": "service.name", "value": { "stringValue": "rag-chatbot" } }
-        ]
+        "attributes": [{ "key": "service.name", "value": { "stringValue": "rag-chatbot" } }]
       },
       "scopeSpans": [
         {
